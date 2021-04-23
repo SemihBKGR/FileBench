@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: server
+    admin:
+      enabled: false
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: bs
+      username: user
+      password: password
+      auto-index-creation: true
+server:
+  port: 9000
+  address: 0.0.0.0
