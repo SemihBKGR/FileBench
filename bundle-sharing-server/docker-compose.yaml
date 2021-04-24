@@ -14,7 +14,7 @@ services:
     ports:
       - '27017:27017'
     networks:
-      - survey-network
+      - bs-server-network
   redis:
     image: "redis:alpine"
     container_name: 'bs-redis'

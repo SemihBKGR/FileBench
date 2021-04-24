@@ -11,6 +11,19 @@ spring:
       username: user
       password: password
       auto-index-creation: true
+  codec:
+    max-in-memory-size: 10MB
 server:
   port: 9000
   address: 0.0.0.0
+
+bundle:
+  id:
+    length: 9
+  resource:
+    root-directory: ./bundle
+  expiration-time:
+    min: 10000 #10 minute
+    max: 60000 #1 hour
+    def: 30000 # 30 minute
+
