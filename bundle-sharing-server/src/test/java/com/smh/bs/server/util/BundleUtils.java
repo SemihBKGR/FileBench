@@ -1,12 +1,12 @@
 package com.smh.bs.server.util;
 
-import com.smh.bs.server.dto.BundleUploadDto;
 import com.smh.bs.server.dto.ResourceUpload;
 
 import java.io.IOException;
 
-public class BundleUtils {
 
+public class BundleUtils {
+/*
     private static final String[] testImages;
 
     static{
@@ -22,5 +22,5 @@ public class BundleUtils {
                 .expirationTime(20000)
                 .build();
     }
-
+*/
 }

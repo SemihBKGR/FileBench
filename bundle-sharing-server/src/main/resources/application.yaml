@@ -11,6 +11,11 @@ spring:
       username: user
       password: password
       auto-index-creation: true
+    redis:
+      repositories:
+        enabled: false
+      hostname: localhost
+      port: 6379
   codec:
     max-in-memory-size: 10MB
 server:
@@ -26,4 +31,3 @@ bundle:
     min: 10000 #10 minute
     max: 60000 #1 hour
     def: 30000 # 30 minute
-

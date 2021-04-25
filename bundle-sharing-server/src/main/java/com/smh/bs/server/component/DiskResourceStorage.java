@@ -21,11 +21,13 @@ public class DiskResourceStorage implements ResourceStorage {
     @Override
     @SneakyThrows
     public int store(String subDirectory, ResourceUpload resource) {
+        /*
         Path subPath=rootPath.resolve(Path.of(subDirectory));
         if (!Files.exists(subPath)) Files.createDirectory(subPath);
         Path resourcePath=subPath.resolve(resource.getName());
         Files.write(resourcePath,resource.getData(),StandardOpenOption.WRITE,StandardOpenOption.CREATE);
-        return resource.getData().length;
+        return resource.getData().length;*/
+        return 0;
     }
 
 }

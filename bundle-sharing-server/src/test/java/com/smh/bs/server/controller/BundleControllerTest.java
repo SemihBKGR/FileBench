@@ -1,6 +1,5 @@
 package com.smh.bs.server.controller;
 
-import com.smh.bs.server.dto.BundleUploadDto;
 import com.smh.bs.server.model.Bundle;
 import com.smh.bs.server.util.BundleUtils;
 import io.netty.handler.codec.base64.Base64Encoder;
@@ -42,9 +41,10 @@ class BundleControllerTest {
     @Test
     @DisplayName("BundleUpload")
     void uploadTest(){
+        /*
         ResponseEntity<Bundle> bundleResponseEntity=restTemplate.exchange("http://localhost:9000/bundle/upload",HttpMethod.POST,
                 new HttpEntity<BundleUploadDto>(BundleUtils.generateBundleUploadDto()),Bundle.class);
-        System.out.println(bundleResponseEntity.getBody());
+        System.out.println(bundleResponseEntity.getBody());*/
     }
 
 }
