@@ -1,8 +1,7 @@
 package com.smh.bs.server.util;
 
 import com.smh.bs.server.dto.BundleUploadDto;
-import com.smh.bs.server.dto.Resource;
-import com.smh.bs.server.model.Bundle;
+import com.smh.bs.server.dto.ResourceUpload;
 
 import java.io.IOException;
 
@@ -15,7 +14,7 @@ public class BundleUtils {
     }
 
     public static BundleUploadDto generateBundleUploadDto() throws IOException {
-        Resource[] resources=new Resource[testImages.length];
+        ResourceUpload[] resources=new ResourceUpload[testImages.length];
         for(int i=0;i<resources.length;i++)
             resources[i++]= ResourceUtils.generateResource(testImages[i]);
         return BundleUploadDto.builder()

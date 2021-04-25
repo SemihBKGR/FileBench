@@ -1,9 +1,9 @@
 package com.smh.bs.server.component;
 
-import com.smh.bs.server.dto.Resource;
+import com.smh.bs.server.dto.ResourceUpload;
 
 public interface ResourceStorage {
 
-    int store(String subDirectory, Resource resource);
+    int store(String subDirectory, ResourceUpload resource);
 
 }

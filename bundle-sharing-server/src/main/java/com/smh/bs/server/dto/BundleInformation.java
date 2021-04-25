@@ -5,13 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Resource {
+public class BundleInformation {
 
-    private byte[] data;
     private String name;
+    private long size;
+    private long expireTime;
+    private List<ResourceInformation> resources;
 
 }

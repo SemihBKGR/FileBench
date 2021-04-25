@@ -5,6 +5,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,13 +17,15 @@ public class Bundle {
     @Id
     private String id;
 
-    private int count;
+    private String name;
 
-    private int bytes;
+    private List<Resource> resources;
+
+    private long size;
 
     @CreatedDate
     private long createdTime;
 
-    private long expirationTime;
+    private long expireTime;
 
 }

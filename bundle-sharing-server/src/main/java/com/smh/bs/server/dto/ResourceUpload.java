@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BundleUploadDto {
+public class ResourceUpload {
 
-    private Resource[] resources;
-    private int expirationTime;
+    private String bundleId;
+    private byte[] bytes;
 
 }
