@@ -9,15 +9,16 @@
         <version>2.4.5</version>
     </parent>
 
-    <groupId>com.smh.bs</groupId>
-    <artifactId>bundle-sharing-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>bundle-sharing-server</name>
-    <description>Server of bundle sharing app</description>
+    <groupId>com.semihbg.filebench</groupId>
+    <artifactId>server</artifactId>
+    <version>0.0.1</version>
+    <name>FileBenchServer</name>
+    <description>Server project of BundleBench</description>
 
     <properties>
         <java.version>11</java.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,30 +1,30 @@
-package com.smh.bs.server.service;
+package com.semihbg.filebench.server.service;
 
-import com.smh.bs.server.model.Bundle;
-import com.smh.bs.server.repository.BundleRepository;
+import com.semihbg.filebench.server.model.Bench;
+import com.semihbg.filebench.server.repository.BenchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class BundleServiceImpl implements BundleService {
+public class BundleServiceImpl implements BenchService {
 
-    private final BundleRepository bundleRepository;
+    private final BenchRepository benchRepository;
 
     @Override
-    public Mono<Bundle> save(Bundle bundle) {
-        return bundleRepository.save(bundle);
+    public Mono<Bench> save(Bench bench) {
+        return benchRepository.save(bench);
     }
 
     @Override
-    public Mono<Bundle> findById(String id) {
-        return bundleRepository.findById(id);
+    public Mono<Bench> findById(String id) {
+        return benchRepository.findById(id);
     }
 
     @Override
     public Mono<Void> deleteById(String id) {
-        return bundleRepository.deleteById(id);
+        return benchRepository.deleteById(id);
     }
 
 }

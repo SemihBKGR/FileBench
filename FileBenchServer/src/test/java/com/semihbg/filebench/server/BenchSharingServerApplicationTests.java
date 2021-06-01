@@ -1,13 +1,14 @@
-package com.smh.bs.server;
+package com.semihbg.filebench.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BundleSharingServerApplicationTests {
+class BenchSharingServerApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }
