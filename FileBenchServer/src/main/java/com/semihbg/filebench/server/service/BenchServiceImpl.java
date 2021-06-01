@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class BundleServiceImpl implements BenchService {
+public class BenchServiceImpl implements BenchService {
 
     private final BenchRepository benchRepository;
 

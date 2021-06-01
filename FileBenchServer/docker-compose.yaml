@@ -5,7 +5,7 @@ services:
     container_name: 'bs-mongo'
     restart: always
     environment:
-      - MONGO_INITDB_DATABASE=bs
+      - MONGO_INITDB_DATABASE=filebench
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=password
     volumes:
