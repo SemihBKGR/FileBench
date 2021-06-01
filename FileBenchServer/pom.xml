@@ -17,6 +17,7 @@
 
     <properties>
         <java.version>11</java.version>
+        <final-jar-name>app</final-jar-name>
     </properties>
 
     <dependencies>
