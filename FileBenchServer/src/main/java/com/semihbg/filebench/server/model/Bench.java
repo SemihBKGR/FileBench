@@ -38,6 +38,7 @@ public class Bench {
                 .build();
         List<File> files=new ArrayList<>(benchCreateDto.getFiles().size());
         benchCreateDto.getFiles().forEach(fileCreateDto -> files.add(File.of(fileCreateDto)));
+        bench.setFiles(files);
         return bench;
     }
 

@@ -15,8 +15,6 @@ public class File {
 
     private List<String> folders;
 
-    private String extension;
-
     private String label;
 
     private String description;
@@ -29,7 +27,6 @@ public class File {
         return File.builder()
                 .name(fileCreateDto.getName())
                 .folders(fileCreateDto.getFolders())
-                .extension(fileCreateDto.getExtension())
                 .label(fileCreateDto.getLabel())
                 .description(fileCreateDto.getDescription())
                 .build();

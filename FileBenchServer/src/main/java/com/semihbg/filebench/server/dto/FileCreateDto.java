@@ -15,8 +15,6 @@ public class FileCreateDto {
 
     private List<String> folders;
 
-    private String extension;
-
     private String label;
 
     private String description;

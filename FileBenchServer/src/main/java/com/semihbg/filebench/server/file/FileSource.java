@@ -4,7 +4,7 @@ import com.semihbg.filebench.server.model.Bench;
 
 import java.io.IOException;
 
-public interface FileRepository {
+public interface FileSource {
 
     void save(FileContext fileContext) throws IOException;
 

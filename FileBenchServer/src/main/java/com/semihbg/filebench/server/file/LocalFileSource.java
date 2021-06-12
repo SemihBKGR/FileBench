@@ -16,46 +16,49 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
-public class IOFileRepository implements FileRepository {
+public class LocalFileSource implements FileSource {
 
-    private final String filePathString;
-    private final Path filePath;
-    private final AtomicBoolean isFileExists;
+    private final String rootDirectoryPathString;
+    private final Path rootDirectoryPath;
+    private final AtomicBoolean isRootDirectoryExists;
 
-    public IOFileRepository(@Value("${file.path:files}") String filePathString) {
-        this.filePathString = filePathString;
-        this.filePath = Path.of(filePathString);
-        this.isFileExists = new AtomicBoolean(false);
-        createFileIfNotExists();
+    public LocalFileSource(@Value("${source.root-path:source}") String rootDirectoryPathString) {
+        this.rootDirectoryPathString = rootDirectoryPathString;
+        this.rootDirectoryPath = Path.of(rootDirectoryPathString);
+        this.isRootDirectoryExists = new AtomicBoolean(Files.exists(rootDirectoryPath));
     }
 
     @SneakyThrows(IOException.class)
-    private void createFileIfNotExists() {
-        if (!Files.exists(filePath)) {
-            Files.createFile(filePath);
-            isFileExists.set(true);
-            log.info("File has been created, path : {}", filePathString);
-        } else log.info("File is already exists, path : {}", filePathString);
+    public void createRootFolderIfNotExists() {
+        if (!Files.exists(rootDirectoryPath)) {
+            Files.createDirectory(rootDirectoryPath);
+            isRootDirectoryExists.set(true);
+            log.info("File has been created, path : {}", rootDirectoryPathString);
+        } else log.info("File is already exists, path : {}", rootDirectoryPathString);
     }
 
     @SneakyThrows(IOException.class)
-    private void deleteFileIfExists() {
-        if (Files.exists(filePath)) {
-            Files.delete(filePath);
-            isFileExists.set(false);
-            log.info("File has been deleted, path : {}", filePathString);
-        } else log.info("File is not already exists, path : {}", filePathString);
+    public void deleteRootFolderIfNotExists() {
+        if (Files.exists(rootDirectoryPath)) {
+            Files.delete(rootDirectoryPath);
+            isRootDirectoryExists.set(false);
+            log.info("File has been deleted, path : {}", rootDirectoryPathString);
+        } else log.info("File is not already exists, path : {}", rootDirectoryPathString);
     }
 
-    private void checkIfFileExists() {
-        if (!isFileExists.get())
+    public boolean isRootDirectoryExists(){
+        return isRootDirectoryExists.get();
+    }
+
+    private void checkIfRootDirectoryExists() {
+        if (!isRootDirectoryExists.get())
             throw new IllegalStateException("File is not exists");
     }
 
     @Override
     public void save(FileContext fileContext) throws IOException {
-        checkIfFileExists();
-        Path currentPath = filePath.resolve(fileContext.getBench().getId());
+        checkIfRootDirectoryExists();
+        Path currentPath = rootDirectoryPath.resolve(fileContext.getBench().getId());
         Files.createDirectory(currentPath);
         fileContext.getFilePartFlux()
                 .subscribeOn(Schedulers.boundedElastic())
@@ -73,7 +76,7 @@ public class IOFileRepository implements FileRepository {
 
     @Override
     public void delete(Bench bench) {
-        checkIfFileExists();
+        checkIfRootDirectoryExists();
 
     }
 
