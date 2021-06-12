@@ -1,5 +1,9 @@
 package com.semihbg.filebench.server.api;
 
+import com.semihbg.filebench.server.component.BenchIdGenerator;
+import com.semihbg.filebench.server.dto.BenchCreateDto;
+import com.semihbg.filebench.server.file.FileContext;
+import com.semihbg.filebench.server.file.FileRepository;
 import com.semihbg.filebench.server.model.Bench;
 import com.semihbg.filebench.server.service.BenchService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +12,8 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.IOException;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -18,12 +24,21 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public class BenchApi {
 
     private final BenchService benchService;
+    private final BenchIdGenerator idGenerator;
+    private final FileRepository fileRepository;
 
     @PostMapping(value = "/create", consumes = {MULTIPART_FORM_DATA_VALUE})
-    public Mono<Bench> create(@RequestPart("files") Flux<FilePart> filePartFlux) {
-        return filePartFlux.map(file -> {
-
-        });
+    public Mono<Bench> create(@RequestPart("files") Flux<FilePart> filePartFlux,
+                              @RequestBody BenchCreateDto benchCreateDto) throws IOException {
+        Bench bench=Bench.of(benchCreateDto);
+        bench.setId(idGenerator.generate());
+        bench.setCreatedTime(System.currentTimeMillis());
+        FileContext fileContext=FileContext.builder()
+                .bench(bench)
+                .filePartFlux(filePartFlux)
+                .build();
+        fileRepository.save(fileContext);
+        return Mono.just(bench);
     }
 
     @GetMapping("/get/{id}")

@@ -6,6 +6,6 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 
 @Configuration
 @EnableReactiveMongoRepositories(basePackages = {"com.semihbg.filebench.server.repository"})
-@EnableReactiveMongoAuditing
 public class MongoConfig {
+
 }

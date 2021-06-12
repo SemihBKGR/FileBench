@@ -1,9 +1,7 @@
 package com.semihbg.filebench.server.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.semihbg.filebench.server.dto.FileCreateDto;
+import lombok.*;
 
 import java.util.List;
 
@@ -26,5 +24,15 @@ public class File {
     private int size;
 
     private long downloadCount;
+
+    public static File of(@NonNull FileCreateDto fileCreateDto){
+        return File.builder()
+                .name(fileCreateDto.getName())
+                .folders(fileCreateDto.getFolders())
+                .extension(fileCreateDto.getExtension())
+                .label(fileCreateDto.getLabel())
+                .description(fileCreateDto.getDescription())
+                .build();
+    }
 
 }

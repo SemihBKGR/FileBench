@@ -1,10 +1,11 @@
 package com.semihbg.filebench.server.model;
 
+import com.semihbg.filebench.server.dto.BenchCreateDto;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -23,11 +24,21 @@ public class Bench {
 
     private List<File> files;
 
-    @CreatedDate
     private long createdTime;
 
     private long expireTime;
 
     private long viewCount;
+
+    public static Bench of(@NonNull BenchCreateDto benchCreateDto) {
+        Bench bench= Bench.builder()
+                .name(benchCreateDto.getName())
+                .description(benchCreateDto.getDescription())
+                .expireTime(benchCreateDto.getExpireTime())
+                .build();
+        List<File> files=new ArrayList<>(benchCreateDto.getFiles().size());
+        benchCreateDto.getFiles().forEach(fileCreateDto -> files.add(File.of(fileCreateDto)));
+        return bench;
+    }
 
 }
