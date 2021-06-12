@@ -3,6 +3,7 @@ package com.semihbg.filebench.server.api;
 import com.semihbg.filebench.server.model.Bench;
 import com.semihbg.filebench.server.service.BenchService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+@Slf4j
 @RestController
 @RequestMapping("/bench")
 @RequiredArgsConstructor

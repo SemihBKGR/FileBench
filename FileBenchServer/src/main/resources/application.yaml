@@ -3,26 +3,6 @@ spring:
     name: server
     admin:
       enabled: false
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: filebench
-      username: user
-      password: password
-      auto-index-creation: true
-    redis:
-      repositories:
-        enabled: false
-      hostname: localhost
-      port: 6379
-  codec:
-    max-in-memory-size: 10MB
-server:
-  port: 9000
-  address: 0.0.0.0
+  profiles:
+    active: dev
 
-
-
-bench-id-generator:
-  id-length: 7

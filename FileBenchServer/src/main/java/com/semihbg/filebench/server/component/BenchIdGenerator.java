@@ -15,7 +15,7 @@ public class BenchIdGenerator implements IdGenerator<String> {
     private final int idLength;
     private final Random random;
 
-    public BenchIdGenerator(@Value("${bench-id-generator.id-length:7}") int idLength) {
+    public BenchIdGenerator(@Value("${id.bench.length:7}") int idLength) {
         this.idLength = idLength;
         random=new Random();
     }
