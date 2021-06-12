@@ -14,8 +14,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.util.Collections;
 
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RestController
@@ -27,10 +28,11 @@ public class BenchApi {
     private final BenchIdGenerator idGenerator;
     private final FileSource fileSource;
 
-    @PostMapping(value = "/create", consumes = {MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/create", consumes = {APPLICATION_JSON_VALUE})
     public Mono<Bench> create(@RequestBody BenchCreateDto benchCreateDto) throws IOException {
         Bench bench=Bench.of(benchCreateDto);
         bench.setId(idGenerator.generate());
+        bench.setFiles(Collections.emptyList());
         bench.setCreatedTime(System.currentTimeMillis());
         bench.setViewCount(0);
         return benchService.save(bench);

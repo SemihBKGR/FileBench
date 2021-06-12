@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -31,15 +32,11 @@ public class Bench {
     private long viewCount;
 
     public static Bench of(@NonNull BenchCreateDto benchCreateDto) {
-        Bench bench= Bench.builder()
+        return Bench.builder()
                 .name(benchCreateDto.getName())
                 .description(benchCreateDto.getDescription())
                 .expireTime(benchCreateDto.getExpireTime())
                 .build();
-        List<File> files=new ArrayList<>(benchCreateDto.getFiles().size());
-        benchCreateDto.getFiles().forEach(fileCreateDto -> files.add(File.of(fileCreateDto)));
-        bench.setFiles(files);
-        return bench;
     }
 
 }

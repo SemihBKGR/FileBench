@@ -15,7 +15,7 @@ public class FileIdGenerator implements IdGenerator<String>{
     private final int idLength;
     private final Random random;
 
-    public FileIdGenerator(@Value("id.file.length:25")int idLength) {
+    public FileIdGenerator(@Value("${id.file.length:25}")int idLength) {
         this.idLength=idLength;
         this.random=new Random();
     }
