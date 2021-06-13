@@ -21,6 +21,7 @@ import static com.semihbg.filebench.server.util.BenchUtils.defaultBench;
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
+@SuppressWarnings("ConstantConditions")
 class BenchServiceImplTest {
 
     @Mock
@@ -44,16 +45,19 @@ class BenchServiceImplTest {
     void saveDefaultBench() {
         Bench bench = defaultBench();
         Mono<Bench> benchMono = benchService.save(bench);
+        Mockito.verify(benchRepository, Mockito.times(1)).save(bench);
         StepVerifier.create(benchMono)
                 .expectNext(bench)
                 .expectComplete()
                 .verify();
     }
 
+
     @Test
     @DisplayName("Save Null Bench")
     void saveNullBench() {
         Mono<Bench> benchMono = benchService.save(null);
+        Mockito.verify(benchRepository, Mockito.times(1)).save(null);
         StepVerifier.create(benchMono)
                 .expectError(IllegalArgumentException.class)
                 .verify();

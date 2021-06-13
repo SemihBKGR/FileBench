@@ -24,5 +24,8 @@ id:
     length: 25
 source:
   root-path: source
-
+validate:
+  bench:
+    max-expiration: 60s
+    min-expiration: 5s
 
