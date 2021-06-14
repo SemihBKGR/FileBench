@@ -1,4 +1,4 @@
-package com.semihbg.filebench.server.file;
+package com.semihbg.filebench.server.source;
 
 import org.junit.jupiter.api.*;
 
@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class LocalFileSourceTest {
+class LocalSourceTest {
 
     static final String FILE_PATH="test-source";
 

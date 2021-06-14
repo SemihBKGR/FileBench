@@ -1,4 +1,4 @@
-package com.semihbg.filebench.server.file;
+package com.semihbg.filebench.server.source;
 
 import com.semihbg.filebench.server.model.Bench;
 import com.semihbg.filebench.server.model.File;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
-public class LocalFileSource implements FileSource {
+public class LocalFileSource implements Source {
 
     private final String rootDirectoryPathString;
     private final Path rootDirectoryPath;
@@ -56,14 +56,14 @@ public class LocalFileSource implements FileSource {
     }
 
     @Override
-    public void save(FileContext fileContext) throws IOException {
+    public void save(SourceContext sourceContext) throws IOException {
         checkIfRootDirectoryExists();
-        Path currentPath = rootDirectoryPath.resolve(fileContext.getBench().getId());
+        Path currentPath = rootDirectoryPath.resolve(sourceContext.getBench().getId());
         Files.createDirectory(currentPath);
-        fileContext.getFilePartFlux()
+        sourceContext.getFilePartFlux()
                 .subscribeOn(Schedulers.boundedElastic())
                 .subscribe(filePart -> {
-                    File file = fileContext.findFileByName(filePart.filename());
+                    File file = sourceContext.findFileByName(filePart.filename());
                     StringJoiner directoryStringJoiner = new StringJoiner("/", "/", "");
                     file.getFolders().forEach(directoryStringJoiner::add);
                     Path directoriesPath = currentPath.resolve(directoryStringJoiner.toString());

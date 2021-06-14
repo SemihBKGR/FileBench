@@ -1,6 +1,6 @@
 package com.semihbg.filebench.server.interceptor;
 
-import com.semihbg.filebench.server.file.LocalFileSource;
+import com.semihbg.filebench.server.source.LocalFileSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;

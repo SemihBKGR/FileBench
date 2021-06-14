@@ -1,4 +1,4 @@
-package com.semihbg.filebench.server.file;
+package com.semihbg.filebench.server.source;
 
 import com.semihbg.filebench.server.model.Bench;
 import com.semihbg.filebench.server.model.File;
@@ -10,7 +10,7 @@ import reactor.core.publisher.Flux;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class FileContext {
+public class SourceContext {
 
     private Bench bench;
     private Flux<FilePart> filePartFlux;

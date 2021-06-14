@@ -4,6 +4,7 @@ import com.semihbg.filebench.server.component.BenchIdGenerator;
 import com.semihbg.filebench.server.dto.BenchCreateDto;
 import com.semihbg.filebench.server.model.Bench;
 import com.semihbg.filebench.server.service.BenchService;
+import com.semihbg.filebench.server.validation.BenchValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ public class BenchApi {
 
     private final BenchService benchService;
     private final BenchIdGenerator idGenerator;
+    private final BenchValidator benchValidator;
 
     @PostMapping(value = "/create", consumes = {APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
@@ -31,6 +33,7 @@ public class BenchApi {
         bench.setFiles(Collections.emptyList());
         bench.setCreatedTime(System.currentTimeMillis());
         bench.setViewCount(0);
+        benchValidator.validateAndThrowIfInvalid(bench);
         return benchService.save(bench);
     }
 

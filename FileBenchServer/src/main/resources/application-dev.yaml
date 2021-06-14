@@ -1,6 +1,7 @@
 server:
   port: 9000
   address: 0.0.0.0
+
 spring:
   data:
     mongodb:
@@ -17,15 +18,30 @@ spring:
       port: 6379
     codec:
       max-in-memory-size: 10MB
+
+# id generator custom properties
 id:
   bench:
     length: 7
   file:
     length: 25
+
+#source api custom properties
 source:
   root-path: source
-validate:
+
+#validation api custom properties
+validation:
   bench:
-    max-expiration: 60s
-    min-expiration: 5s
+    nameRegex: "[A-Za-z0-9]"
+    nameRequired: true
+    nameMinLength: 3
+    nameMaxLength: 25
+    descriptionRegex: "[A-Za-z0-9]"
+    descriptionReqired: false
+    descriptionMinLength: 0
+    descriptionMaxLength: 255
+    expirationMinDuration: 5s
+    expirationMaxDuration: 60s
+
 
