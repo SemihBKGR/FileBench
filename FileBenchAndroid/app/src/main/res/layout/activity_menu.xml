@@ -6,5 +6,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MenuActivity">
-
+    <Button
+            android:text="Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/button" tools:layout_editor_absoluteY="248dp"
+            tools:layout_editor_absoluteX="146dp"/>
+    <Button
+            android:text="Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/button2" tools:layout_editor_absoluteY="344dp"
+            tools:layout_editor_absoluteX="156dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
