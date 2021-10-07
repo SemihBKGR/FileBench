@@ -65,7 +65,7 @@ public class LocalFileSource implements Source {
                 .subscribe(filePart -> {
                     File file = sourceContext.findFileByName(filePart.filename());
                     StringJoiner directoryStringJoiner = new StringJoiner("/", "/", "");
-                    file.getFolders().forEach(directoryStringJoiner::add);
+                    file.getPath().forEach(directoryStringJoiner::add);
                     Path directoriesPath = currentPath.resolve(directoryStringJoiner.toString());
                     FileUtils.createDirectories(directoriesPath);
                     Path thisFilePath = directoriesPath.resolve(file.getName());

@@ -17,6 +17,8 @@ public class BenchCreateDto {
 
     private String description;
 
+    private List<FileCreateDto> files;
+
     private long expireTime;
 
 }

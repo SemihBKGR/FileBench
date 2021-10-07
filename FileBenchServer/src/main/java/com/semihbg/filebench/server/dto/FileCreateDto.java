@@ -13,7 +13,9 @@ public class FileCreateDto {
 
     private String name;
 
-    private List<String> folders;
+    private String path;
+
+    private int size;
 
     private String label;
 

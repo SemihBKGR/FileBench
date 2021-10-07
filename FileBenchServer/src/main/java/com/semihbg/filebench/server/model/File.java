@@ -13,7 +13,7 @@ public class File {
 
     private String name;
 
-    private List<String> folders;
+    private String path;
 
     private String label;
 
@@ -26,9 +26,10 @@ public class File {
     public static File of(@NonNull FileCreateDto fileCreateDto){
         return File.builder()
                 .name(fileCreateDto.getName())
-                .folders(fileCreateDto.getFolders())
+                .path(fileCreateDto.getPath())
                 .label(fileCreateDto.getLabel())
                 .description(fileCreateDto.getDescription())
+                .size(fileCreateDto.getSize())
                 .build();
     }
 
