@@ -12,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -35,16 +38,28 @@ public class BenchApi {
     @PostMapping(path = "/file/{bench_id}", consumes = {APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Bench> createFile(@RequestBody FileCreateDto fileCreateDto,
-                                  @PathVariable("bench_id") String benchId){
+                                  @PathVariable("bench_id") String benchId) {
         return benchService.findById(benchId)
-                .doOnNext(bench -> bench.getFiles().add(fileOf(fileCreateDto)))
-                .flatMap(bench -> benchService.update(benchId,bench));
+                .doOnNext(bench -> {
+                    if (bench.getFiles() == null)
+                        bench.setFiles(new ArrayList<>());
+                    bench.getFiles().add(fileOf(fileCreateDto));
+                })
+                .flatMap(bench -> benchService.update(benchId, bench));
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Mono<Bench> getBenchById(@PathVariable("id") String id) {
         return benchService.findById(id);
+    }
+
+    @PostMapping("/u/{bench_id}/{file_id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<File> uploadFile(@RequestPart("file") Mono<MultipartFile> file,
+                                 @PathVariable("bench_id") String benchId,
+                                 @PathVariable("file_id") String fileId){
+
     }
 
     private Bench benchOf(@NonNull BenchCreateDto benchCreateDto) {
@@ -62,6 +77,7 @@ public class BenchApi {
     private File fileOf(@NonNull FileCreateDto fileCreateDto) {
         return File
                 .builder()
+                .id(idGenerator.generate())
                 .name(fileCreateDto.getName())
                 .label(fileCreateDto.getLabel())
                 .description(fileCreateDto.getDescription())
