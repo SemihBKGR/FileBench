@@ -16,7 +16,7 @@ public class File {
     private String path;
     private String label;
     private String description;
-    private int size;
+    private long size;
     private long downloadCount;
 
 }

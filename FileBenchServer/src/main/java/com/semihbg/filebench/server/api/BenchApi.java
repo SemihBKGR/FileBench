@@ -6,13 +6,16 @@ import com.semihbg.filebench.server.model.File;
 import com.semihbg.filebench.server.model.dto.BenchCreateDto;
 import com.semihbg.filebench.server.model.dto.FileCreateDto;
 import com.semihbg.filebench.server.service.BenchService;
-import com.semihbg.filebench.server.validation.BenchValidator;
+import com.semihbg.filebench.server.service.StorageService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ public class BenchApi {
 
     private final BenchService benchService;
     private final NumericalIdGenerator idGenerator;
-    private final BenchValidator benchValidator;
+    private final StorageService storageService;
 
     @PostMapping(consumes = {APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
@@ -50,16 +53,44 @@ public class BenchApi {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Mono<Bench> getBenchById(@PathVariable("id") String id) {
+    public Mono<Bench> getBench(@PathVariable("id") String id) {
         return benchService.findById(id);
     }
 
     @PostMapping("/u/{bench_id}/{file_id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<File> uploadFile(@RequestPart("file") Mono<MultipartFile> file,
+    public Mono<File> uploadFile(@RequestPart("file") Mono<FilePart> filePartMono,
                                  @PathVariable("bench_id") String benchId,
-                                 @PathVariable("file_id") String fileId){
+                                 @PathVariable("file_id") String fileId,
+                                 @RequestHeader("Content-Length") long contentLength) {
+        return benchService.findById(benchId)
+                .doOnNext(bench -> {
+                    if (bench.getFiles() == null)
+                        bench.setFiles(new ArrayList<>());
+                })
+                .flatMap(bench -> {
+                    var fileOptional = bench.getFiles()
+                            .stream()
+                            .filter(file -> file.getId().equals(fileId))
+                            .limit(1)
+                            .findFirst();
+                    if (fileOptional.isPresent()) {
+                        var file = fileOptional.get();
+                        file.setSize(contentLength);
+                        return storageService
+                                .saveFile(benchId, fileId, filePartMono)
+                                .then(benchService.save(bench))
+                                .then(Mono.just(file));
+                    } else {
+                        return Mono.error(new IllegalArgumentException());
+                    }
+                });
+    }
 
+    @GetMapping(value = "/r/{bench_id}/{file_id}",produces = MediaType.IMAGE_JPEG_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public Flux<DataBuffer> getResource(@PathVariable("bench_id") String benchId, @PathVariable("file_id") String fileId) {
+        return storageService.getFile(benchId, fileId);
     }
 
     private Bench benchOf(@NonNull BenchCreateDto benchCreateDto) {

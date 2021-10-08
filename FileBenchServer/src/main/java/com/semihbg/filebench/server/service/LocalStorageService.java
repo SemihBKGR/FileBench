@@ -1,6 +1,5 @@
 package com.semihbg.filebench.server.service;
 
-import ch.qos.logback.core.rolling.helper.FileNamePattern;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -12,6 +11,7 @@ import org.springframework.util.StreamUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,11 +25,27 @@ public class LocalStorageService implements StorageService {
         this.rootDirPath = Path.of(rootDirPath);
     }
 
+    @PostConstruct
+    public void createRootDirIfNotExists() throws IOException {
+        if(!Files.exists(rootDirPath))
+            Files.createDirectory(rootDirPath);
+    }
+
     @Override
     public Mono<Void> saveFile(@NonNull String benchId, @NonNull String fileId, @NonNull Mono<FilePart> filePartMono) {
-        return filePartMono
-                .doOnNext(filePart -> filePart.transferTo(resolveFilePath(benchId,fileId)))
-                .then();
+        return Mono.<Path>create(voidMonoSink -> {
+            try {
+                var directoryPath = resolveBenchPath(benchId);
+                if (!Files.exists(directoryPath))
+                    Files.createDirectory(directoryPath);
+                var filePath = resolveFilePath(benchId, fileId);
+                if (!Files.exists(filePath))
+                    Files.createFile(filePath);
+                voidMonoSink.success();
+            } catch (IOException e) {
+                voidMonoSink.error(e);
+            }
+        }).flatMap(filePath -> filePartMono.flatMap(filePart -> filePart.transferTo(filePath)));
     }
 
     @Override
