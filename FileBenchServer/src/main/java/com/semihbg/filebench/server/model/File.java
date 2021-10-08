@@ -13,7 +13,6 @@ public class File {
 
     private String id;
     private String name;
-    private String path;
     private String label;
     private String description;
     private long size;
