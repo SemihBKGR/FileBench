@@ -14,7 +14,7 @@ services:
     ports:
       - '27017:27017'
     networks:
-      - bs-server-network
+      - file-bench-server-network
   redis:
     image: "redis:alpine"
     container_name: 'bs-redis'
@@ -26,8 +26,8 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - bs-server-network
+      - file-bench-server-network
 
 networks:
-  bs-server-network:
+  file-bench-server-network:
     driver: bridge

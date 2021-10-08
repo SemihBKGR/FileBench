@@ -9,15 +9,15 @@
         <version>2.4.5</version>
     </parent>
 
-    <groupId>com.semihbg.filebench</groupId>
+    <groupId>com.semihbkgr.filebench</groupId>
     <artifactId>server</artifactId>
-    <version>0.0.1</version>
+    <version>1.0.0</version>
     <name>FileBenchServer</name>
     <description>Server project of FileBench</description>
 
     <properties>
         <java.version>11</java.version>
-        <final-jar-name>app</final-jar-name>
+        <final-jar-name>file-bench-server</final-jar-name>
     </properties>
 
     <dependencies>
@@ -79,6 +79,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>${final-jar-name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
