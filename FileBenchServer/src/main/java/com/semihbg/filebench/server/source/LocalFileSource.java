@@ -11,6 +11,7 @@ import reactor.core.scheduler.Schedulers;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -65,7 +66,7 @@ public class LocalFileSource implements Source {
                 .subscribe(filePart -> {
                     File file = sourceContext.findFileByName(filePart.filename());
                     StringJoiner directoryStringJoiner = new StringJoiner("/", "/", "");
-                    file.getPath().forEach(directoryStringJoiner::add);
+                    Arrays.asList(file.getPath().split("/")).forEach(directoryStringJoiner::add);
                     Path directoriesPath = currentPath.resolve(directoryStringJoiner.toString());
                     FileUtils.createDirectories(directoriesPath);
                     Path thisFilePath = directoriesPath.resolve(file.getName());
@@ -77,7 +78,6 @@ public class LocalFileSource implements Source {
     @Override
     public void delete(Bench bench) {
         checkIfRootDirectoryExists();
-
     }
 
 }

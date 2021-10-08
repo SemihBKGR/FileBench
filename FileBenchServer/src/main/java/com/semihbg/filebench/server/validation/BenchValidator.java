@@ -89,23 +89,23 @@ public class BenchValidator implements Validator<Bench> {
         }
 
         //Check expiration
-        if(bench.getExpireTime()< benchConstraints.getExpirationMinDuration().toMillis()){
-            validationResult.addInvalidation(ValidationResult.InvalidMessage
-                    .builder()
-                    .type(Long.class)
-                    .field("expiration")
-                    .message(String.format("expiration must be bigger than %d ms",
-                            benchConstraints.getExpirationMinDuration().toMillis()))
-                    .build());
-        }else if(bench.getExpireTime()> benchConstraints.getExpirationMaxDuration().toMillis()){
-            validationResult.addInvalidation(ValidationResult.InvalidMessage
-                    .builder()
-                    .type(Long.class)
-                    .field("expiration")
-                    .message(String.format("expiration must be smaller than %d ms",
-                            benchConstraints.getExpirationMaxDuration().toMillis()))
-                    .build());
-        }
+//        if(bench.getExpireTime()< benchConstraints.getExpirationMinDuration().toMillis()){
+//            validationResult.addInvalidation(ValidationResult.InvalidMessage
+//                    .builder()
+//                    .type(Long.class)
+//                    .field("expiration")
+//                    .message(String.format("expiration must be bigger than %d ms",
+//                            benchConstraints.getExpirationMinDuration().toMillis()))
+//                    .build());
+//        }else if(bench.getExpireTime()> benchConstraints.getExpirationMaxDuration().toMillis()){
+//            validationResult.addInvalidation(ValidationResult.InvalidMessage
+//                    .builder()
+//                    .type(Long.class)
+//                    .field("expiration")
+//                    .message(String.format("expiration must be smaller than %d ms",
+//                            benchConstraints.getExpirationMaxDuration().toMillis()))
+//                    .build());
+//        }
 
         return validationResult;
     }

@@ -1,8 +1,8 @@
 package com.semihbg.filebench.server.integration;
 
 import com.semihbg.filebench.server.api.BenchApi;
-import com.semihbg.filebench.server.component.BenchIdGenerator;
-import com.semihbg.filebench.server.dto.BenchCreateDto;
+import com.semihbg.filebench.server.component.NumericalIdGenerator;
+import com.semihbg.filebench.server.model.dto.BenchCreateDto;
 import com.semihbg.filebench.server.model.Bench;
 import com.semihbg.filebench.server.repository.BenchRepository;
 import com.semihbg.filebench.server.service.BenchServiceImpl;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
@@ -35,7 +34,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = BenchApi.class)
-@Import({BenchServiceImpl.class, BenchIdGenerator.class})
+@Import({BenchServiceImpl.class, NumericalIdGenerator.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 @SuppressWarnings("ConstantConditions")
 public class BenchIntegrationTest {

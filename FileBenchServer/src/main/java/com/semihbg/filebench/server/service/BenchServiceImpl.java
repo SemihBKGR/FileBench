@@ -18,6 +18,11 @@ public class BenchServiceImpl implements BenchService {
     }
 
     @Override
+    public Mono<Bench> update(String id, Bench bench) {
+        return benchRepository.save(bench.withId(id));
+    }
+
+    @Override
     public Mono<Bench> findById(String id) {
         return benchRepository.findById(id);
     }
