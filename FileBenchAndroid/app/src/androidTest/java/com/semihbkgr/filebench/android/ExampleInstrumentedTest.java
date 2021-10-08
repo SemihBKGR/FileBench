@@ -1,4 +1,4 @@
-package com.semihbg.filebench.android;
+package com.semihbkgr.filebench.android;
 
 import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;

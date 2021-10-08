@@ -1,4 +1,4 @@
-package com.semihbg.filebench.android;
+package com.semihbkgr.filebench.android;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.semihbg.filebench.android;
+package com.semihbkgr.filebench.android;
 
 import android.content.Intent;
 import android.util.Log;
