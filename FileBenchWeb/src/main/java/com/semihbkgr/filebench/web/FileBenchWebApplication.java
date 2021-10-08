@@ -1,4 +1,4 @@
-package com.semihbg.filebench.web;
+package com.semihbkgr.filebench.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
