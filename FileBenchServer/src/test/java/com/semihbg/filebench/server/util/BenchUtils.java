@@ -1,6 +1,6 @@
 package com.semihbg.filebench.server.util;
 
-import com.semihbg.filebench.server.dto.BenchCreateDto;
+import com.semihbg.filebench.server.model.dto.BenchCreateDto;
 import com.semihbg.filebench.server.model.Bench;
 
 import java.util.Collections;

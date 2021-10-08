@@ -1,7 +1,8 @@
 package com.semihbg.filebench.server.util;
 
-import com.semihbg.filebench.server.dto.BenchCreateDto;
-import com.semihbg.filebench.server.dto.FileCreateDto;
+import com.semihbg.filebench.server.component.IdGenerator;
+import com.semihbg.filebench.server.model.dto.BenchCreateDto;
+import com.semihbg.filebench.server.model.dto.FileCreateDto;
 import com.semihbg.filebench.server.model.Bench;
 import com.semihbg.filebench.server.model.File;
 import lombok.NonNull;
@@ -13,26 +14,27 @@ import java.util.stream.StreamSupport;
 
 public class ModelUtils {
 
-    public static Bench benchOf(@NonNull BenchCreateDto bcd) {
-        return benchOf(null,bcd,0);
-    }
-
-    public static Bench benchOf(@Nullable String id, @NonNull BenchCreateDto bcd, long createdTime) {
+    public static Bench benchOf(@Nullable String id, @NonNull BenchCreateDto bcd) {
         return Bench
                 .builder()
                 .id(id)
                 .name(bcd.getName())
                 .description(bcd.getDescription())
                 .files(allFilesOf(bcd.getFiles()))
-                .createdTime(createdTime)
+                .createdTime(0)
                 .expireTime(bcd.getExpireTime())
                 .viewCount(0)
                 .build();
     }
 
-    public static File fileOf(@NonNull FileCreateDto fcd) {
+    public static Bench benchOf(@NonNull BenchCreateDto bcd) {
+        return benchOf(null,bcd);
+    }
+
+    public static File fileOf(@Nullable String id,@NonNull FileCreateDto fcd) {
         return File
                 .builder()
+                .id(id)
                 .name(fcd.getName())
                 .path(fcd.getPath())
                 .label(fcd.getLabel())
@@ -40,6 +42,18 @@ public class ModelUtils {
                 .size(fcd.getSize())
                 .downloadCount(0)
                 .build();
+    }
+
+    public static File fileOf(@NonNull FileCreateDto fcd) {
+        return fileOf(null,fcd);
+    }
+
+    public static List<File> allFilesOf(@NonNull IdGenerator<? extends String> idGenerator,
+                                        @NonNull Iterable<FileCreateDto> fcdIterable) {
+        return StreamSupport
+                .stream(fcdIterable.spliterator(), false)
+                .map(fcd-> fileOf(idGenerator.generate(),fcd))
+                .collect(Collectors.toList());
     }
 
     public static List<File> allFilesOf(@NonNull Iterable<FileCreateDto> fcdIterable) {

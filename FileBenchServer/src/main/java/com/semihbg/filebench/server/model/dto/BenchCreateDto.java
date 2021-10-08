@@ -1,4 +1,4 @@
-package com.semihbg.filebench.server.dto;
+package com.semihbg.filebench.server.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +14,8 @@ import java.util.List;
 public class BenchCreateDto {
 
     private String name;
-
     private String description;
-
     private List<FileCreateDto> files;
-
     private long expireTime;
 
 }

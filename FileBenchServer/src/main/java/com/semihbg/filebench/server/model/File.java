@@ -1,9 +1,8 @@
 package com.semihbg.filebench.server.model;
 
-import com.semihbg.filebench.server.dto.FileCreateDto;
+import com.mongodb.lang.NonNull;
 import lombok.*;
-
-import java.util.List;
+import org.springframework.data.annotation.Id;
 
 @Data
 @AllArgsConstructor
@@ -11,26 +10,14 @@ import java.util.List;
 @Builder
 public class File {
 
+    @Id
+    @NonNull
+    private String id;
     private String name;
-
     private String path;
-
     private String label;
-
     private String description;
-
     private int size;
-
     private long downloadCount;
-
-    public static File of(@NonNull FileCreateDto fileCreateDto){
-        return File.builder()
-                .name(fileCreateDto.getName())
-                .path(fileCreateDto.getPath())
-                .label(fileCreateDto.getLabel())
-                .description(fileCreateDto.getDescription())
-                .size(fileCreateDto.getSize())
-                .build();
-    }
 
 }
