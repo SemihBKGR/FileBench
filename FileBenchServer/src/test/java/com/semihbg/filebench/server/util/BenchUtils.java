@@ -33,9 +33,8 @@ public class BenchUtils {
                 .id(DEFAULT_ID)
                 .name(DEFAULT_NAME)
                 .description(DEFAULT_DESCRIPTION)
-                .createdTime(System.currentTimeMillis())
-                .expireTime(DEFAULT_EXPIRATION_TIME)
-                .viewCount(DEFAULT_VIEW_COUNT)
+                .creationTimeMs(System.currentTimeMillis())
+                .expirationTimeMs(DEFAULT_EXPIRATION_TIME)
                 .files(Collections.emptyList())
                 .build();
     }
@@ -44,7 +43,7 @@ public class BenchUtils {
         return BenchCreateDto.builder()
                 .name(DEFAULT_NAME)
                 .description(DEFAULT_DESCRIPTION)
-                .expireTime(DEFAULT_EXPIRATION_TIME)
+                .expirationDurationMs(DEFAULT_EXPIRATION_TIME)
                 .build();
     }
 

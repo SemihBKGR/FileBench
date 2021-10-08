@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +13,6 @@ public class BenchCreateDto {
 
     private String name;
     private String description;
-    private List<FileCreateDto> files;
-    private long expireTime;
+    private long expirationDurationMs;
 
 }
