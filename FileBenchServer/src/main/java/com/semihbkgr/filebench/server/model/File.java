@@ -13,8 +13,8 @@ public class File {
 
     private String id;
     private String name;
-    private String label;
     private String description;
+    private String label;
     private long size;
     private long downloadCount;
 
