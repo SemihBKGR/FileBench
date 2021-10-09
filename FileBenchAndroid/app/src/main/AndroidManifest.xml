@@ -9,13 +9,13 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.FileBenchAndroid">
-        <activity android:name="com.semihbkgr.filebench.android.CreateActivity">
+        <activity android:name="com.semihbkgr.filebench.android.activity.CreateActivity">
         </activity>
-        <activity android:name="com.semihbkgr.filebench.android.BenchActivity">
+        <activity android:name="com.semihbkgr.filebench.android.activity.BenchActivity">
         </activity>
-        <activity android:name="com.semihbkgr.filebench.android.MenuActivity">
+        <activity android:name="com.semihbkgr.filebench.android.activity.MenuActivity">
         </activity>
-        <activity android:name="com.semihbkgr.filebench.android.MainActivity">
+        <activity android:name="com.semihbkgr.filebench.android.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

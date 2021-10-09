@@ -1,7 +1,8 @@
-package com.semihbkgr.filebench.android;
+package com.semihbkgr.filebench.android.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.semihbkgr.filebench.android.R;
 
 public class CreateActivity extends AppCompatActivity {
 

@@ -1,9 +1,10 @@
-package com.semihbkgr.filebench.android;
+package com.semihbkgr.filebench.android.activity;
 
 import android.content.Intent;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.semihbkgr.filebench.android.R;
 
 import java.util.Timer;
 import java.util.TimerTask;

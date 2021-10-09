@@ -1,10 +1,11 @@
-package com.semihbkgr.filebench.android;
+package com.semihbkgr.filebench.android.activity;
 
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.semihbkgr.filebench.android.R;
 
 public class MenuActivity extends AppCompatActivity {
 
