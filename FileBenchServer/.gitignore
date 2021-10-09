@@ -33,7 +33,7 @@ build/
 .vscode/
 
 # Docker Volumes
-volumes/*
+volumes/mongo/db/*
 
 # Storeage
 files

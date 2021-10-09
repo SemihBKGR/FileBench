@@ -46,7 +46,7 @@ public class BenchApi {
         return benchService.findById(id);
     }
 
-    @PostMapping("/u/{bench_id}")
+    @PostMapping("/c/{bench_id}")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<File> createFile(@PathVariable("bench_id") String benchId,
                                  @RequestPart("file") Mono<FilePart> filePartMono,
@@ -80,14 +80,14 @@ public class BenchApi {
                 });
     }
 
-    @GetMapping(value = "/r/{bench_id}/{file_id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/c/{bench_id}/{file_id}", produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public Flux<DataBuffer> getResource(@PathVariable("bench_id") String benchId,
+    public Flux<DataBuffer> getFileContent(@PathVariable("bench_id") String benchId,
                                         @PathVariable("file_id") String fileId) {
         return storageService.getFile(benchId, fileId);
     }
 
-    @PostMapping("/u/{bench_id}/{file_id}")
+    @PostMapping("/c/u/{bench_id}/{file_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Mono<File> updateFileContent(@RequestPart("file") Mono<FilePart> filePartMono,
                                         @PathVariable("bench_id") String benchId,
@@ -113,7 +113,7 @@ public class BenchApi {
                 });
     }
 
-    @PutMapping("/{bench_id}")
+    @PostMapping("/u/{bench_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Mono<Bench> updateBenchProperties(@RequestBody BenchUpdateDto benchUpdateDto,
                                              @PathVariable("bench_id") String benchId) {
@@ -125,7 +125,7 @@ public class BenchApi {
                 });
     }
 
-    @PutMapping("/{bench_id}/{file_id}")
+    @PostMapping("/u/{bench_id}/{file_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Mono<File> updateFileProperties(@RequestBody FileUpdateDto fileUpdateDto,
                                             @PathVariable("bench_id") String benchId,
@@ -173,6 +173,5 @@ public class BenchApi {
                 .downloadCount(0L)
                 .build();
     }
-
 
 }

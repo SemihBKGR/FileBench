@@ -1,6 +1,13 @@
 server:
   port: 9000
   address: 0.0.0.0
+  error:
+    whitelabel:
+      enabled: false
+    include-exception: true
+    include-message: always
+    include-stacktrace: on_param
+    include-binding-errors: on_param
 
 spring:
   data:
