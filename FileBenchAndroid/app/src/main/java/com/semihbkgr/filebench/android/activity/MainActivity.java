@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import com.semihbkgr.filebench.android.AppContext;
 import com.semihbkgr.filebench.android.R;
 
 import java.util.Timer;
@@ -18,6 +19,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        AppContext.initialize();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         new Timer("StartAppTimerThread",true).schedule(new TimerTask() {
             @Override
             public void run() {
@@ -28,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 1000L);
-        
     }
 
 }
