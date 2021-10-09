@@ -2,6 +2,7 @@ package com.semihbkgr.filebench.android.net;
 
 import androidx.annotation.NonNull;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.semihbkgr.filebench.android.model.Bench;
 import com.semihbkgr.filebench.android.net.dto.BenchCreateDto;
 import okhttp3.*;
@@ -20,7 +21,7 @@ public class BenchClientImpl implements BenchClient {
 
     @Override
     public void getBench(String benchId, ClientCallback<? super Bench> callback) {
-        Request request = new Request.Builder().url(BenchConstants.BENCH_CREATE_URI).get().build();
+        Request request = new Request.Builder().url(BenchConstants.BENCH_GET_URI).get().build();
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -58,8 +59,11 @@ public class BenchClientImpl implements BenchClient {
                     if(responseBody==null)
                         throw new IllegalStateException("ResponseBody is null");
                     String responseStr=responseBody.string();
-                    Bench bench=gson.fromJson(responseStr,Bench.class);
-                    callback.success(bench);
+                    try{
+                        callback.success(gson.fromJson(responseStr,Bench.class));
+                    }catch (JsonSyntaxException e){
+                        callback.error(null);
+                    }
                 }catch (Exception e){
                     callback.fail(e);
                 }

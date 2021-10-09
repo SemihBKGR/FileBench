@@ -10,6 +10,7 @@ import com.semihbkgr.filebench.android.AppContext;
 import com.semihbkgr.filebench.android.R;
 import com.semihbkgr.filebench.android.model.Bench;
 import com.semihbkgr.filebench.android.net.ClientCallback;
+import com.semihbkgr.filebench.android.net.ErrorModel;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -38,9 +39,12 @@ public class MenuActivity extends AppCompatActivity {
             AppContext.instance.benchClient.getBench(benchId, new ClientCallback<Bench>() {
                 @Override
                 public void success(Bench data) {
-                    runOnUiThread(() -> {
-                        runOnUiThread(() -> Toast.makeText(MenuActivity.this, "Success", Toast.LENGTH_SHORT).show());
-                    });
+                    runOnUiThread(() -> Toast.makeText(MenuActivity.this, "Success", Toast.LENGTH_SHORT).show());
+                }
+
+                @Override
+                public void error(ErrorModel errorModel) {
+                    runOnUiThread(() -> Toast.makeText(MenuActivity.this, "Error", Toast.LENGTH_SHORT).show());
                 }
 
                 @Override
