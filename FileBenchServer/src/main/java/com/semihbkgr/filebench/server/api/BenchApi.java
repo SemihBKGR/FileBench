@@ -19,6 +19,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -38,6 +39,15 @@ public class BenchApi {
         return benchService.save(benchOf(benchCreateDto));
     }
 
+
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Mono<Bench> getBench(@PathVariable("id") String id) {
+        return benchService.findById(id);
+    }
+
+
     @PostMapping(path = "/file/{bench_id}", consumes = {APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<Bench> createFile(@RequestBody FileCreateDto fileCreateDto,
@@ -51,13 +61,8 @@ public class BenchApi {
                 .flatMap(bench -> benchService.update(benchId, bench));
     }
 
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Mono<Bench> getBench(@PathVariable("id") String id) {
-        return benchService.findById(id);
-    }
-
-    @PostMapping("/u/{bench_id}/{file_id}")
+    
+    @PostMapping("/update/{bench_id}")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<File> uploadFile(@RequestPart("file") Mono<FilePart> filePartMono,
                                  @PathVariable("bench_id") String benchId,
@@ -79,7 +84,7 @@ public class BenchApi {
                         file.setSize(contentLength);
                         return storageService
                                 .saveFile(benchId, fileId, filePartMono)
-                                .then(benchService.save(bench))
+                                .then(benchService.update(benchId,bench))
                                 .then(Mono.just(file));
                     } else {
                         return Mono.error(new IllegalArgumentException());
@@ -100,8 +105,10 @@ public class BenchApi {
                 .id(idGenerator.generate())
                 .name(benchCreateDto.getName())
                 .description(benchCreateDto.getDescription())
+                .files(Collections.emptyList())
                 .creationTimeMs(currentTimeMs)
                 .expirationTimeMs(currentTimeMs + benchCreateDto.getExpirationDurationMs())
+                .viewCount(0L)
                 .build();
     }
 

@@ -1,13 +1,13 @@
 package com.semihbkgr.filebench.server.service;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Service
+@Slf4j
 public class LocalStorageService implements StorageService {
 
     private final Path rootDirPath;
@@ -27,8 +28,13 @@ public class LocalStorageService implements StorageService {
 
     @PostConstruct
     public void createRootDirIfNotExists() throws IOException {
-        if(!Files.exists(rootDirPath))
+        if (!Files.exists(rootDirPath)) {
+            log.info("RootDir does not exists");
             Files.createDirectory(rootDirPath);
+            log.info("RootDir has been created successfully");
+        } else
+            log.info("RootDir is already available");
+        log.info("RootDir path: {}", rootDirPath);
     }
 
     @Override
@@ -41,7 +47,7 @@ public class LocalStorageService implements StorageService {
                 var filePath = resolveFilePath(benchId, fileId);
                 if (!Files.exists(filePath))
                     Files.createFile(filePath);
-                voidMonoSink.success();
+                voidMonoSink.success(filePath);
             } catch (IOException e) {
                 voidMonoSink.error(e);
             }
@@ -49,8 +55,13 @@ public class LocalStorageService implements StorageService {
     }
 
     @Override
+    public Mono<Void> updateFile(String benchId, String fileId, Mono<FilePart> filePartMono) {
+        return filePartMono.flatMap(filePart -> filePart.transferTo(resolveFilePath(benchId,fileId)));
+    }
+
+    @Override
     public Flux<DataBuffer> getFile(@NonNull String benchId, @NonNull String fileId) {
-        return DataBufferUtils.read(resolveFilePath(benchId, fileId), new DefaultDataBufferFactory(), StreamUtils.BUFFER_SIZE);
+        return DataBufferUtils.read(resolveFilePath(benchId, fileId), new DefaultDataBufferFactory(), 256);
     }
 
     @Override

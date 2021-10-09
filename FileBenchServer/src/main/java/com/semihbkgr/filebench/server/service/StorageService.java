@@ -9,6 +9,8 @@ public interface StorageService {
 
     Mono<Void> saveFile(String benchId,String fileId,Mono<FilePart> filePartMono);
 
+    Mono<Void> updateFile(String benchId,String fileId,Mono<FilePart> filePartMono);
+
     Flux<DataBuffer> getFile(String benchId,String fileId);
 
     Mono<Void> deleteBench(String benchId);

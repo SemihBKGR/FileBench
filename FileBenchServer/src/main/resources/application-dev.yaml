@@ -26,10 +26,6 @@ id:
   file:
     length: 25
 
-#source api custom properties
-source:
-  root-path: source
-
 #validation api custom properties
 validation:
   bench:
@@ -44,4 +40,6 @@ validation:
     expirationMinDuration: 5s
     expirationMaxDuration: 60s
 
-
+storage:
+  local:
+    root-dir: files
