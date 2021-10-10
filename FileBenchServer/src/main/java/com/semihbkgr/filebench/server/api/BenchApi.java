@@ -1,6 +1,8 @@
 package com.semihbkgr.filebench.server.api;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.semihbkgr.filebench.server.component.NumericalIdGenerator;
+import com.semihbkgr.filebench.server.component.TokenGenerator;
 import com.semihbkgr.filebench.server.model.Bench;
 import com.semihbkgr.filebench.server.model.File;
 import com.semihbkgr.filebench.server.model.dto.BenchCreateDto;
@@ -33,15 +35,18 @@ public class BenchApi {
     private final BenchService benchService;
     private final NumericalIdGenerator idGenerator;
     private final StorageService storageService;
+    private final TokenGenerator tokenGenerator;
 
     @PostMapping(consumes = {APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
+    @JsonView(Bench.Views.BenchWriteAccess.class)
     public Mono<Bench> createBench(@RequestBody BenchCreateDto benchCreateDto) {
         return benchService.save(benchOf(benchCreateDto));
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @JsonView(Bench.Views.BenchReadAccess.class)
     public Mono<Bench> getBench(@PathVariable("id") String id) {
         return benchService.findById(id);
     }
@@ -154,6 +159,7 @@ public class BenchApi {
         long currentTimeMs = System.currentTimeMillis();
         return Bench.builder()
                 .id(idGenerator.generate())
+                .updateToken(tokenGenerator.generate())
                 .name(benchCreateDto.getName())
                 .description(benchCreateDto.getDescription())
                 .files(Collections.emptyList())
