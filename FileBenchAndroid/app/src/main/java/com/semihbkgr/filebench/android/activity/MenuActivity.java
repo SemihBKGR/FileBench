@@ -1,5 +1,6 @@
 package com.semihbkgr.filebench.android.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -50,6 +51,7 @@ public class MenuActivity extends AppCompatActivity {
                 @Override
                 public void fail(Throwable t) {
                     runOnUiThread(() -> Toast.makeText(MenuActivity.this, "Fail", Toast.LENGTH_SHORT).show());
+                    t.printStackTrace();
                 }
             });
         } else
@@ -57,7 +59,8 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void onCreateBenchButtonClicked(View view) {
-
+        Intent intent=new Intent(this,CreateActivity.class);
+        startActivity(intent);
     }
 
 }
