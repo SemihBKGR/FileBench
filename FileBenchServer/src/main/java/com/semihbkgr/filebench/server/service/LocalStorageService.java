@@ -56,7 +56,7 @@ public class LocalStorageService implements StorageService {
 
     @Override
     public Mono<Void> updateFile(String benchId, String fileId, Mono<FilePart> filePartMono) {
-        return filePartMono.flatMap(filePart -> filePart.transferTo(resolveFilePath(benchId,fileId)));
+        return filePartMono.flatMap(filePart -> filePart.transferTo(resolveFilePath(benchId, fileId)));
     }
 
     @Override

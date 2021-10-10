@@ -46,3 +46,7 @@ validation:
 storage:
   local:
     root-dir: files
+
+bench:
+  manager:
+    expiration-check-time-ms: 1000
