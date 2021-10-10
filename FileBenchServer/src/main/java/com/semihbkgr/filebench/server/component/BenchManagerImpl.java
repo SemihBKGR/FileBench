@@ -1,5 +1,7 @@
 package com.semihbkgr.filebench.server.component;
 
+import com.semihbkgr.filebench.server.service.BenchService;
+import com.semihbkgr.filebench.server.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -12,13 +14,25 @@ import org.springframework.stereotype.Component;
 @EnableAsync
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class BenchManagerImpl implements BenchManager {
 
-    @Scheduled(fixedDelayString = "${bench.manager.expiration-check-time-ms:0")
+    private final BenchService benchService;
+    private final StorageService storageService;
+
+    @Scheduled(fixedDelayString = "${bench.manager.expiration-check-time-ms:0}")
     @Async
     @Override
     public void checkForExpiredBench() {
-
+        long currentTimeMs = System.currentTimeMillis();
+        benchService.findAllInfo()
+                .filter(benchInfo -> currentTimeMs >= benchInfo.getExpirationTimeMs())
+                .flatMap(benchInfo -> {
+                    log.info("Bench has been expired, benchId: {}",benchInfo.getId());
+                    return benchService.deleteById(benchInfo.getId())
+                            .then(storageService.deleteBench(benchInfo.getId()));
+                })
+                .blockLast();
     }
 
 }

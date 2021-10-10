@@ -8,6 +8,7 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -68,7 +69,7 @@ public class LocalStorageService implements StorageService {
     public Mono<Void> deleteBench(@NonNull String benchId) {
         return Mono.create(voidMonoSink -> {
             try {
-                Files.delete(resolveBenchPath(benchId));
+                FileSystemUtils.deleteRecursively(resolveBenchPath(benchId));
             } catch (IOException e) {
                 voidMonoSink.error(e);
             }
