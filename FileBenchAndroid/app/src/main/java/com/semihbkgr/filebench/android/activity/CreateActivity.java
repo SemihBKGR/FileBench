@@ -1,6 +1,8 @@
 package com.semihbkgr.filebench.android.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -11,6 +13,8 @@ import com.semihbkgr.filebench.android.model.Bench;
 import com.semihbkgr.filebench.android.net.ClientCallback;
 import com.semihbkgr.filebench.android.net.ErrorModel;
 import com.semihbkgr.filebench.android.net.dto.BenchCreateDto;
+
+import static com.semihbkgr.filebench.android.AppContext.Constants.INTENT_EXTRA_BENCH;
 
 public class CreateActivity extends AppCompatActivity {
 
@@ -48,18 +52,29 @@ public class CreateActivity extends AppCompatActivity {
         AppContext.instance.benchClient.createBench(benchCreateDto, new ClientCallback<Bench>() {
             @Override
             public void success(Bench data) {
-                runOnUiThread(() -> Toast.makeText(CreateActivity.this, "Success", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(CreateActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                    Intent intent=new Intent(CreateActivity.this,ManageActivity.class);
+                    intent.putExtra(INTENT_EXTRA_BENCH, data);
+                    startActivity(intent);
+                    createButton.setClickable(true);
+                });
             }
 
             @Override
             public void error(ErrorModel errorModel) {
-                runOnUiThread(() -> Toast.makeText(CreateActivity.this, "Error", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(CreateActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                    createButton.setClickable(true);
+                });
             }
 
             @Override
             public void fail(Throwable t) {
-                runOnUiThread(() -> Toast.makeText(CreateActivity.this, "Fail", Toast.LENGTH_SHORT).show());
-                t.printStackTrace();
+                runOnUiThread(() ->{
+                    Toast.makeText(CreateActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                    createButton.setClickable(true);
+                });
             }
         });
     }
@@ -84,7 +99,7 @@ public class CreateActivity extends AppCompatActivity {
 
         @Override
         public String toString() {
-            if(hour==1){
+            if(hour==1)
                 return String.format("%d Hour",hour);
             return String.format("%d Hours",hour);
         }

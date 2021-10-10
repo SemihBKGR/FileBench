@@ -28,6 +28,7 @@ public class AppContext {
 
     public static class Constants{
         public static final int BENCH_ID_LENGTH=7;
+        public static final String INTENT_EXTRA_BENCH="bench";
     }
 
 }
