@@ -49,7 +49,7 @@ public class BenchApi {
     @PostMapping("/c/{bench_id}")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<File> createFile(@PathVariable("bench_id") String benchId,
-                                 @RequestPart("file") Mono<FilePart> filePartMono,
+                                 @RequestPart("content") Mono<FilePart> filePartMono,
                                  @RequestHeader("Content-Length") long contentLength) {
         return benchService.findById(benchId)
                 .flatMap(bench -> {
@@ -83,13 +83,13 @@ public class BenchApi {
     @GetMapping(value = "/c/{bench_id}/{file_id}", produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Flux<DataBuffer> getFileContent(@PathVariable("bench_id") String benchId,
-                                        @PathVariable("file_id") String fileId) {
+                                           @PathVariable("file_id") String fileId) {
         return storageService.getFile(benchId, fileId);
     }
 
     @PostMapping("/c/u/{bench_id}/{file_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Mono<File> updateFileContent(@RequestPart("file") Mono<FilePart> filePartMono,
+    public Mono<File> updateFileContent(@RequestPart("content") Mono<FilePart> filePartMono,
                                         @PathVariable("bench_id") String benchId,
                                         @PathVariable("file_id") String fileId,
                                         @RequestHeader("Content-Length") long contentLength) {
@@ -121,15 +121,15 @@ public class BenchApi {
                 .flatMap(bench -> {
                     bench.setName(benchUpdateDto.getName());
                     bench.setDescription(benchUpdateDto.getDescription());
-                    return benchService.update(benchId,bench);
+                    return benchService.update(benchId, bench);
                 });
     }
 
     @PostMapping("/u/{bench_id}/{file_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Mono<File> updateFileProperties(@RequestBody FileUpdateDto fileUpdateDto,
-                                            @PathVariable("bench_id") String benchId,
-                                            @PathVariable("file_id") String fileId) {
+                                           @PathVariable("bench_id") String benchId,
+                                           @PathVariable("file_id") String fileId) {
         return benchService.findById(benchId)
                 .flatMap(bench -> {
                     if (bench.getFiles() == null)
@@ -145,7 +145,7 @@ public class BenchApi {
                     file.setName(fileUpdateDto.getName());
                     file.setDescription(fileUpdateDto.getDescription());
                     file.setLabel(fileUpdateDto.getLabel());
-                    return benchService.update(benchId,bench)
+                    return benchService.update(benchId, bench)
                             .thenReturn(file);
                 });
     }
