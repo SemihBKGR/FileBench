@@ -96,7 +96,51 @@ public class BenchApi {
         return storageService.getFile(benchId, fileId);
     }
 
-    @PostMapping("/c/u/{bench_id}/{file_id}")
+    @PutMapping("/{bench_id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @JsonView(Bench.Views.BenchWriteAccess.class)
+    public Mono<Bench> updateBenchProperties(@RequestBody BenchUpdateDto benchUpdateDto,
+                                             @PathVariable("bench_id") String benchId,
+                                             @RequestParam("token") String token) {
+        return benchService.findById(benchId)
+                .flatMap(bench -> {
+                    if (!bench.getToken().equals(token))
+                        return Mono.error(new IncorrectTokenException(HttpStatus.FORBIDDEN, "Token is incorrect"));
+                    bench.setName(benchUpdateDto.getName());
+                    bench.setDescription(benchUpdateDto.getDescription());
+                    return benchService.update(benchId, bench);
+                });
+    }
+
+    @PutMapping("/{bench_id}/{file_id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Mono<File> updateFileProperties(@RequestBody FileUpdateDto fileUpdateDto,
+                                           @PathVariable("bench_id") String benchId,
+                                           @PathVariable("file_id") String fileId,
+                                           @RequestParam("token") String token) {
+        return benchService.findById(benchId)
+                .flatMap(bench -> {
+                    if (!bench.getToken().equals(token))
+                        return Mono.error(new IncorrectTokenException(HttpStatus.FORBIDDEN, "Token is incorrect"));
+                    if (bench.getFiles() == null)
+                        return Mono.error(new IllegalArgumentException());
+                    var fileOptional = bench.getFiles()
+                            .stream()
+                            .filter(file -> file.getId().equals(fileId))
+                            .limit(1)
+                            .findFirst();
+                    if (fileOptional.isEmpty())
+                        return Mono.error(new IllegalArgumentException());
+                    var file = fileOptional.get();
+                    file.setName(fileUpdateDto.getName());
+                    file.setDescription(fileUpdateDto.getDescription());
+                    file.setLabel(fileUpdateDto.getLabel());
+                    return benchService.update(benchId, bench)
+                            .thenReturn(file);
+                });
+    }
+
+    @PutMapping("/c/{bench_id}/{file_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Mono<File> updateFileContent(@PathVariable("bench_id") String benchId,
                                         @PathVariable("file_id") String fileId,
@@ -122,50 +166,6 @@ public class BenchApi {
                             .updateFile(benchId, fileId, filePartMono)
                             .then(benchService.update(benchId, bench))
                             .then(Mono.just(file));
-                });
-    }
-
-    @PostMapping("/u/{bench_id}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @JsonView(Bench.Views.BenchWriteAccess.class)
-    public Mono<Bench> updateBenchProperties(@RequestBody BenchUpdateDto benchUpdateDto,
-                                             @PathVariable("bench_id") String benchId,
-                                             @RequestParam("token") String token) {
-        return benchService.findById(benchId)
-                .flatMap(bench -> {
-                    if (!bench.getToken().equals(token))
-                        return Mono.error(new IncorrectTokenException(HttpStatus.FORBIDDEN, "Token is incorrect"));
-                    bench.setName(benchUpdateDto.getName());
-                    bench.setDescription(benchUpdateDto.getDescription());
-                    return benchService.update(benchId, bench);
-                });
-    }
-
-    @PostMapping("/u/{bench_id}/{file_id}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Mono<File> updateFileProperties(@RequestBody FileUpdateDto fileUpdateDto,
-                                           @PathVariable("bench_id") String benchId,
-                                           @PathVariable("file_id") String fileId,
-                                           @RequestParam("token") String token) {
-        return benchService.findById(benchId)
-                .flatMap(bench -> {
-                    if (!bench.getToken().equals(token))
-                        return Mono.error(new IncorrectTokenException(HttpStatus.FORBIDDEN, "Token is incorrect"));
-                    if (bench.getFiles() == null)
-                        return Mono.error(new IllegalArgumentException());
-                    var fileOptional = bench.getFiles()
-                            .stream()
-                            .filter(file -> file.getId().equals(fileId))
-                            .limit(1)
-                            .findFirst();
-                    if (fileOptional.isEmpty())
-                        return Mono.error(new IllegalArgumentException());
-                    var file = fileOptional.get();
-                    file.setName(fileUpdateDto.getName());
-                    file.setDescription(fileUpdateDto.getDescription());
-                    file.setLabel(fileUpdateDto.getLabel());
-                    return benchService.update(benchId, bench)
-                            .thenReturn(file);
                 });
     }
 
