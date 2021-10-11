@@ -36,11 +36,15 @@ public class MenuActivity extends AppCompatActivity {
     private void onGetBenchButtonClicked(View view) {
         String benchId = benchIdEditText.getEditableText().toString();
         if (benchId.length() == AppContext.Constants.BENCH_ID_LENGTH) {
-            Toast.makeText(this, "Bench id length must be 7", Toast.LENGTH_SHORT).show();
             AppContext.instance.benchClient.getBench(benchId, new ClientCallback<Bench>() {
                 @Override
                 public void success(Bench data) {
-                    runOnUiThread(() -> Toast.makeText(MenuActivity.this, "Success", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        Toast.makeText(MenuActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                        Intent intent=new Intent(MenuActivity.this,BenchActivity.class);
+                        intent.putExtra(AppContext.Constants.INTENT_EXTRA_BENCH,data);
+                        startActivity(intent);
+                    });
                 }
 
                 @Override

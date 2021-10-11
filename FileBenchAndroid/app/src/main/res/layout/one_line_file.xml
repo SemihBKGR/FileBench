@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <ImageView
+                android:id="@+id/fileImageView"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                app:srcCompat="@drawable/image"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/fileNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"/>
+
+            <TextView
+                    android:id="@+id/fileDescriptionTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"/>
+
+            <TextView
+                    android:id="@+id/fileLabelTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"/>
+
+            <TextView
+                    android:id="@+id/fileSizeTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+            android:id="@+id/downloadButton"
+            android:text="Download"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+</LinearLayout>
