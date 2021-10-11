@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonView(Bench.Views.BenchInfo.class)
 public class File {
 
     private String id;

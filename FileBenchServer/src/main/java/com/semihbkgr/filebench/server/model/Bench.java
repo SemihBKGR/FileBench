@@ -21,9 +21,9 @@ public class Bench {
     @JsonView(Views.BenchReadAccess.class)
     private String id;
 
-    @Indexed(unique = true)
+    @Indexed(unique = true,name = "token")
     @JsonView(Views.BenchWriteAccess.class)
-    private String updateToken;
+    private String token;
 
     private String name;
     private String description;
