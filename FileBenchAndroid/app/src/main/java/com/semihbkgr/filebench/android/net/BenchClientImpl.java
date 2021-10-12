@@ -37,7 +37,9 @@ public class BenchClientImpl implements BenchClient {
 
     @Override
     public void updateBench(String benchId, String token, BenchUpdateDto benchUpdateDto, ClientCallback<? super Bench> callback) {
-
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(benchUpdateDto));
+        Request request = new Request.Builder().url(BenchConstants.BENCH_CREATE_URI+"/"+benchId+"?token="+token).post(requestBody).build();
+        enqueueBenchRequest(request,callback);
     }
 
     private void enqueueBenchRequest(@NonNull Request request, @NonNull ClientCallback<? super Bench> callback){
