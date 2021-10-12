@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.semihbkgr.filebench.android.model.Bench;
 import com.semihbkgr.filebench.android.net.dto.BenchCreateDto;
+import com.semihbkgr.filebench.android.net.dto.BenchUpdateDto;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class BenchClientImpl implements BenchClient {
 
     @Override
     public void getBench(String benchId, ClientCallback<? super Bench> callback) {
-        Request request = new Request.Builder().url(BenchConstants.BENCH_GET_URI).get().build();
+        Request request = new Request.Builder().url(BenchConstants.BENCH_GET_URI+"/"+benchId).get().build();
         enqueueBenchRequest(request,callback);
     }
 
@@ -34,6 +35,11 @@ public class BenchClientImpl implements BenchClient {
         enqueueBenchRequest(request,callback);
     }
 
+    @Override
+    public void updateBench(String benchId, String token, BenchUpdateDto benchUpdateDto, ClientCallback<? super Bench> callback) {
+
+    }
+
     private void enqueueBenchRequest(@NonNull Request request, @NonNull ClientCallback<? super Bench> callback){
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -42,46 +48,19 @@ public class BenchClientImpl implements BenchClient {
             }
 
             @Override
-            public void onResponse(@NonNull Call call,@NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call,@NonNull Response response) throws IOException{
                 try (ResponseBody responseBody = response.body()) {
                     if (responseBody == null)
                         throw new IllegalStateException("ResponseBody is null");
                     String responseJsonStr=responseBody.string();
-                    Optional<Bench> benchOptional = unmarshallBench(responseJsonStr);
-                    if (benchOptional.isPresent())
-                        callback.success(benchOptional.get());
-                    else {
-                        Optional<ErrorModel> errorModelOptional = unmarshallErrorModel(responseJsonStr);
-                        if (errorModelOptional.isPresent())
-                            callback.error(errorModelOptional.get());
-                        else
-                            throw new IllegalStateException("Response cannot be unmarshalled successfully");
-                    }
+                    if(response.code()/100==2)
+                        callback.success(gson.fromJson(responseJsonStr, Bench.class));
+                    else
+                        callback.error(gson.fromJson(responseJsonStr, ErrorModel.class));
                 }
             }
         });
     }
 
-    @NonNull
-    private Optional<Bench> unmarshallBench(@Nullable String jsonStr) {
-        if (jsonStr == null || jsonStr.isEmpty())
-            return Optional.empty();
-        try {
-            return Optional.of(gson.fromJson(jsonStr, Bench.class));
-        } catch (JsonSyntaxException ignore) {
-            return Optional.empty();
-        }
-    }
-
-    @NonNull
-    private Optional<ErrorModel> unmarshallErrorModel(@Nullable String jsonStr) {
-        if (jsonStr == null || jsonStr.isEmpty())
-            return Optional.empty();
-        try {
-            return Optional.of(gson.fromJson(jsonStr, ErrorModel.class));
-        } catch (JsonSyntaxException ignore) {
-            return Optional.empty();
-        }
-    }
 
 }
