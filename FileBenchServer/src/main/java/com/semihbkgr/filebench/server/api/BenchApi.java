@@ -3,7 +3,6 @@ package com.semihbkgr.filebench.server.api;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.semihbkgr.filebench.server.component.NumericalIdGenerator;
 import com.semihbkgr.filebench.server.component.TokenGenerator;
-import com.semihbkgr.filebench.server.error.IncorrectTokenException;
 import com.semihbkgr.filebench.server.model.Bench;
 import com.semihbkgr.filebench.server.model.File;
 import com.semihbkgr.filebench.server.model.dto.BenchCreateDto;
@@ -19,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -61,7 +61,7 @@ public class BenchApi {
         return benchService.findById(benchId)
                 .flatMap(bench -> {
                     if (!bench.getToken().equals(token))
-                        return Mono.error(new IncorrectTokenException(HttpStatus.FORBIDDEN, "Token is incorrect"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Token is incorrect"));
                     var file = fileOf(contentLength);
                     if (bench.getFiles() == null)
                         bench.setFiles(new ArrayList<>());
@@ -105,7 +105,7 @@ public class BenchApi {
         return benchService.findById(benchId)
                 .flatMap(bench -> {
                     if (!bench.getToken().equals(token))
-                        return Mono.error(new IncorrectTokenException(HttpStatus.FORBIDDEN, "Token is incorrect"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Token is incorrect"));
                     bench.setName(benchUpdateDto.getName());
                     bench.setDescription(benchUpdateDto.getDescription());
                     return benchService.update(benchId, bench);
@@ -121,7 +121,7 @@ public class BenchApi {
         return benchService.findById(benchId)
                 .flatMap(bench -> {
                     if (!bench.getToken().equals(token))
-                        return Mono.error(new IncorrectTokenException(HttpStatus.FORBIDDEN, "Token is incorrect"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Token is incorrect"));
                     if (bench.getFiles() == null)
                         return Mono.error(new IllegalArgumentException());
                     var fileOptional = bench.getFiles()
@@ -150,7 +150,7 @@ public class BenchApi {
         return benchService.findById(benchId)
                 .flatMap(bench -> {
                     if (!bench.getToken().equals(token))
-                        return Mono.error(new IncorrectTokenException(HttpStatus.FORBIDDEN, "Token is incorrect"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Token is incorrect"));
                     if (bench.getFiles() == null)
                         return Mono.error(new IllegalArgumentException());
                     var fileOptional = bench.getFiles()
