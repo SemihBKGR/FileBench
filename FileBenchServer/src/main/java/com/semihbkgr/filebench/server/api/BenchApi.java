@@ -10,6 +10,9 @@ import com.semihbkgr.filebench.server.model.dto.BenchUpdateDto;
 import com.semihbkgr.filebench.server.model.dto.FileUpdateDto;
 import com.semihbkgr.filebench.server.service.BenchService;
 import com.semihbkgr.filebench.server.service.StorageService;
+import com.semihbkgr.filebench.server.validation.BenchValidator;
+import com.semihbkgr.filebench.server.validation.FileValidator;
+import com.semihbkgr.filebench.server.validation.ValidationException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,12 +40,20 @@ public class BenchApi {
     private final NumericalIdGenerator idGenerator;
     private final StorageService storageService;
     private final TokenGenerator tokenGenerator;
+    private final BenchValidator benchValidator;
+    private final FileValidator fileValidator;
 
     @PostMapping(consumes = {APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     @JsonView(Bench.Views.BenchWriteAccess.class)
     public Mono<Bench> createBench(@RequestBody BenchCreateDto benchCreateDto) {
-        return benchService.save(benchOf(benchCreateDto));
+        return Mono.just(benchMonoOf(benchCreateDto))
+                .flatMap(bench -> benchValidator.validate(bench)
+                        .flatMap(validationResult -> {
+                            if (validationResult.isInvalid())
+                                return Mono.error(new ValidationException(validationResult));
+                            return benchService.save(bench);
+                        }));
     }
 
     @GetMapping("/{id}")
@@ -50,7 +61,7 @@ public class BenchApi {
     @JsonView(Bench.Views.BenchReadAccess.class)
     public Mono<Bench> getBench(@PathVariable("id") String id) {
         return benchService.findById(id)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"Bench not found")));
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")));
     }
 
     @PostMapping("/c/{bench_id}")
@@ -60,17 +71,24 @@ public class BenchApi {
                                  @RequestParam("token") String token,
                                  @RequestHeader("Content-Length") long contentLength) {
         return benchService.findById(benchId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"Bench not found")))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
                 .flatMap(bench -> {
                     if (!bench.getToken().equals(token))
                         return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
-                    var file = fileOf(contentLength);
                     if (bench.getFiles() == null)
                         bench.setFiles(new ArrayList<>());
-                    bench.getFiles().add(file);
-                    return storageService.saveFile(benchId, file.getId(), filePartMono)
-                            .then(benchService.update(benchId, bench))
-                            .thenReturn(file);
+                    var file = fileOf(contentLength);
+                    return fileValidator.validate(file)
+                            .flatMap(validationResult -> {
+                                if (validationResult.isInvalid())
+                                    return Mono.error(new ValidationException(validationResult));
+                                else {
+                                    bench.getFiles().add(file);
+                                    return storageService.saveFile(benchId, file.getId(), filePartMono)
+                                            .then(benchService.update(benchId, bench))
+                                            .thenReturn(file);
+                                }
+                            });
                 });
     }
 
@@ -79,7 +97,7 @@ public class BenchApi {
     public Mono<File> getFile(@PathVariable("bench_id") String benchId,
                               @PathVariable("file_id") String fileId) {
         return benchService.findById(benchId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"Bench not found")))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
                 .flatMap(bench -> {
                     if (bench.getFiles() == null)
                         return Mono.error(new IllegalArgumentException());
@@ -87,7 +105,7 @@ public class BenchApi {
                             .filter(file -> file.getId().equals(fileId))
                             .findFirst();
                     if (fileOptional.isEmpty())
-                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"File not found"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found"));
                     return Mono.just(fileOptional.get());
                 });
     }
@@ -97,7 +115,7 @@ public class BenchApi {
     public Flux<DataBuffer> getFileContent(@PathVariable("bench_id") String benchId,
                                            @PathVariable("file_id") String fileId) {
         return storageService.getFile(benchId, fileId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"File content not found")));
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File content not found")));
     }
 
     @PutMapping("/{bench_id}")
@@ -107,13 +125,18 @@ public class BenchApi {
                                              @PathVariable("bench_id") String benchId,
                                              @RequestParam("token") String token) {
         return benchService.findById(benchId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"Bench not found")))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
                 .flatMap(bench -> {
                     if (!bench.getToken().equals(token))
                         return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
                     bench.setName(benchUpdateDto.getName());
                     bench.setDescription(benchUpdateDto.getDescription());
-                    return benchService.update(benchId, bench);
+                    return benchValidator.validate(bench)
+                            .flatMap(validationResult -> {
+                                if (validationResult.isInvalid())
+                                    return Mono.error(new ValidationException(validationResult));
+                                return benchService.update(benchId, bench);
+                            });
                 });
     }
 
@@ -124,25 +147,30 @@ public class BenchApi {
                                            @PathVariable("file_id") String fileId,
                                            @RequestParam("token") String token) {
         return benchService.findById(benchId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"Bench not found")))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
                 .flatMap(bench -> {
                     if (!bench.getToken().equals(token))
                         return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
                     if (bench.getFiles() == null)
-                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"File not found"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found"));
                     var fileOptional = bench.getFiles()
                             .stream()
                             .filter(file -> file.getId().equals(fileId))
                             .limit(1)
                             .findFirst();
                     if (fileOptional.isEmpty())
-                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"File not found"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found"));
                     var file = fileOptional.get();
                     file.setName(fileUpdateDto.getName());
                     file.setDescription(fileUpdateDto.getDescription());
                     file.setLabel(fileUpdateDto.getLabel());
-                    return benchService.update(benchId, bench)
-                            .thenReturn(file);
+                    return fileValidator.validate(file)
+                            .flatMap(validationResult -> {
+                                if (validationResult.isInvalid())
+                                    return Mono.error(new ValidationException(validationResult));
+                                return benchService.update(benchId, bench)
+                                        .thenReturn(file);
+                            });
                 });
     }
 
@@ -154,19 +182,19 @@ public class BenchApi {
                                         @RequestParam("token") String token,
                                         @RequestHeader("Content-Length") long contentLength) {
         return benchService.findById(benchId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"Bench not found")))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
                 .flatMap(bench -> {
                     if (!bench.getToken().equals(token))
                         return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
                     if (bench.getFiles() == null)
-                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"File not found"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found"));
                     var fileOptional = bench.getFiles()
                             .stream()
                             .filter(file -> file.getId().equals(fileId))
                             .limit(1)
                             .findFirst();
                     if (fileOptional.isEmpty())
-                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"File not found"));
+                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found"));
                     var file = fileOptional.get();
                     file.setSize(contentLength);
                     return storageService.updateFile(benchId, fileId, filePartMono)
@@ -175,7 +203,7 @@ public class BenchApi {
                 });
     }
 
-    private Bench benchOf(@NonNull BenchCreateDto benchCreateDto) {
+    private Bench benchMonoOf(@NonNull BenchCreateDto benchCreateDto) {
         long currentTimeMs = System.currentTimeMillis();
         return Bench.builder()
                 .id(idGenerator.generate())

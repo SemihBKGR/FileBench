@@ -49,23 +49,8 @@ public class ValidationResult {
         this.invalidationUnitList.add(invalidationUnit);
     }
 
-    public boolean isValid() {
-        return invalidationUnitList.isEmpty();
-    }
-
     public boolean isInvalid(){
         return !invalidationUnitList.isEmpty();
-    }
-
-    public Optional<ValidationException> createException(){
-        if(isInvalid())
-            return Optional.of(new ValidationException(this));
-        return Optional.empty();
-    }
-
-    public void throwIfInvalid() {
-        if (isInvalid())
-            throw new ValidationException(this);
     }
 
     public void combine(@NonNull ValidationResult validationResult) {

@@ -3,6 +3,7 @@ package com.semihbkgr.filebench.server.validation;
 import com.semihbkgr.filebench.server.model.File;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -18,22 +19,22 @@ public class FileValidator implements Validator<File> {
 
     public FileValidator(FileConstraints fileConstraints) {
         log.info("FileValidator is started with '{}'", fileConstraints);
-        this.fileConstraints=fileConstraints;
+        this.fileConstraints = fileConstraints;
         this.namePattern = Pattern.compile(fileConstraints.getNameRegex());
         this.descriptionPattern = Pattern.compile(fileConstraints.getDescriptionRegex());
         this.labelPattern = Pattern.compile(fileConstraints.getLabelRegex());
     }
 
     @Override
-    public ValidationResult validate(File file) {
+    public Mono<ValidationResult> validate(File file) {
         file.setName(file.getName().isBlank() ? null : file.getName().strip());
         file.setDescription(file.getDescription().isBlank() ? null : file.getDescription().strip());
         file.setDescription(file.getDescription().isBlank() ? null : file.getDescription().strip());
-        var validationResult=ValidationResult.empty();
+        var validationResult = ValidationResult.empty();
         checkName(file.getName()).ifPresent(validationResult::addInvalidationUnit);
         checkDescription(file.getDescription()).ifPresent(validationResult::addInvalidationUnit);
         checkLabel(file.getLabel()).ifPresent(validationResult::addInvalidationUnit);
-        return validationResult;
+        return Mono.just(validationResult);
     }
 
     private Optional<ValidationResult.InvalidationUnit> checkName(String name) {

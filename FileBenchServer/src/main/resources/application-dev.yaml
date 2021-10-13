@@ -53,3 +53,6 @@ storage:
 bench:
   manager:
     expiration-check-time-ms: 1000
+
+file:
+  size-max-byte: 1.048.576

@@ -3,6 +3,7 @@ package com.semihbkgr.filebench.server.validation;
 import com.semihbkgr.filebench.server.model.Bench;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -23,14 +24,14 @@ public class BenchValidator implements Validator<Bench> {
     }
 
     @Override
-    public ValidationResult validate(Bench bench) {
+    public Mono<ValidationResult> validate(Bench bench) {
         bench.setName(bench.getName().isBlank() ? null : bench.getName().strip());
         bench.setDescription(bench.getDescription().isBlank() ? null : bench.getDescription().strip());
         var validationResult = ValidationResult.empty();
         checkName(bench.getName()).ifPresent(validationResult::addInvalidationUnit);
         checkDescription(bench.getDescription()).ifPresent(validationResult::addInvalidationUnit);
         checkExpirationDuration(bench.getExpirationDurationMs()).ifPresent(validationResult::addInvalidationUnit);
-        return validationResult;
+        return Mono.just(validationResult);
     }
 
     private Optional<ValidationResult.InvalidationUnit> checkName(String name) {
