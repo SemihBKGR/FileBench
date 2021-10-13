@@ -1,6 +1,9 @@
 package com.semihbkgr.filebench.android.model;
 
-public class File {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class File implements Parcelable {
 
     private String id;
     private String name;
@@ -20,6 +23,27 @@ public class File {
         this.size = size;
         this.downloadCount = downloadCount;
     }
+
+    protected File(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        description = in.readString();
+        label = in.readString();
+        size = in.readLong();
+        downloadCount = in.readLong();
+    }
+
+    public static final Creator<File> CREATOR = new Creator<File>() {
+        @Override
+        public File createFromParcel(Parcel in) {
+            return new File(in);
+        }
+
+        @Override
+        public File[] newArray(int size) {
+            return new File[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -67,6 +91,21 @@ public class File {
 
     public void setDownloadCount(long downloadCount) {
         this.downloadCount = downloadCount;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(label);
+        dest.writeLong(size);
+        dest.writeLong(downloadCount);
     }
 
 }

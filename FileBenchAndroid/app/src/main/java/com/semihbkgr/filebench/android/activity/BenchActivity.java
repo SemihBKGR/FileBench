@@ -60,7 +60,8 @@ public class BenchActivity extends AppCompatActivity {
         benchCreationTimeTextView.setText(String.valueOf(bench.getCreationTimeMs()));
         benchExpirationTimeTextView.setText(String.valueOf(bench.getExpirationTimeMs()));
         benchViewCountTextView.setText(String.valueOf(bench.getViewCount()));
-        fileListView.setAdapter(new FileListAdapter(this,bench.getFiles()));
+        if(bench.getFiles()!=null)
+            fileListView.setAdapter(new FileListAdapter(this,bench.getFiles()));
     }
 
     private static class FileListAdapter extends ArrayAdapter<File>{

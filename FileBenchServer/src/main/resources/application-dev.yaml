@@ -22,26 +22,26 @@ id:
 
 validation:
   bench:
-    nameRegex: "[A-Za-z0-9]"
+    nameRegex: "^[a-zA-Z0-9]+$"
     nameRequired: true
     nameMinLength: 3
     nameMaxLength: 25
-    descriptionRegex: "[A-Za-z0-9]"
+    descriptionRegex: "^[a-zA-Z0-9]+$"
     descriptionReqired: false
     descriptionMinLength: 0
     descriptionMaxLength: 255
-    expirationMinDuration: 5s
-    expirationMaxDuration: 60s
+    expirationMinDuration: 1H
+    expirationMaxDuration: 24H
   file:
-    nameRegex: "[A-Za-z0-9]"
-    nameRequired: true
+    nameRegex: "^[a-zA-Z0-9]+$"
+    nameRequired: false
     nameMinLength: 3
     nameMaxLength: 25
-    descriptionRegex: "[A-Za-z0-9]"
+    descriptionRegex: "^[a-zA-Z0-9]+$"
     descriptionReqired: false
     descriptionMinLength: 0
     descriptionMaxLength: 255
-    labelRegex: "[A-Za-z0-9]"
+    labelRegex: "^[a-zA-Z0-9_]+$"
     labelReqired: false
     labelMinLength: 0
     labelMaxLength: 255
