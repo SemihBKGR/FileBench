@@ -15,7 +15,7 @@ public class NumericalIdGenerator implements IdGenerator<String> {
     private final int idLength;
     private final Random random;
 
-    public NumericalIdGenerator(@Value("${id.bench.length:7}") int idLength) {
+    public NumericalIdGenerator(@Value("${id.length:7}") int idLength) {
         this.idLength = idLength;
         random=new Random();
     }

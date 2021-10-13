@@ -1,7 +1,6 @@
 package com.semihbkgr.filebench.server.validation;
 
 import com.semihbkgr.filebench.server.model.Bench;
-import com.semihbkgr.filebench.server.validation.constraint.BenchConstraints;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -12,16 +11,16 @@ import java.util.regex.Pattern;
 @Component
 public class BenchValidator implements Validator<Bench> {
 
-    private final BenchConstraints benchConstraints;
+    private final BenchConstraint benchConstraint;
 
     private final Pattern namePattern;
     private final Pattern descriptionPattern;
 
-    public BenchValidator(BenchConstraints benchConstraints) {
-        log.info("Bench validation is started with '{}' BenchConstraints", benchConstraints);
-        this.benchConstraints = benchConstraints;
-        this.namePattern = Pattern.compile(benchConstraints.getNameRegex());
-        this.descriptionPattern = Pattern.compile(benchConstraints.getDescriptionRegex());
+    public BenchValidator(BenchConstraint benchConstraint) {
+        log.info("Bench validation is started with '{}' BenchConstraint", benchConstraint);
+        this.benchConstraint = benchConstraint;
+        this.namePattern = Pattern.compile(benchConstraint.getNameRegex());
+        this.descriptionPattern = Pattern.compile(benchConstraint.getDescriptionRegex());
     }
 
     @Override
@@ -36,21 +35,21 @@ public class BenchValidator implements Validator<Bench> {
 
         //Check Name constraints
         if (bench.getName() == null) {//Check if null
-            if(benchConstraints.isNameRequired())
+            if(benchConstraint.isNameRequired())
                 validationResult.addInvalidation(ValidationResult.InvalidMessage
                         .builder()
                         .type(String.class)
                         .field("name")
                         .message("name cannot be null")
                         .build());
-        }else if(bench.getName().length()< benchConstraints.getNameMinLength() ||
-                bench.getName().length()> benchConstraints.getNameMaxLength()) {
+        }else if(bench.getName().length()< benchConstraint.getNameMinLength() ||
+                bench.getName().length()> benchConstraint.getNameMaxLength()) {
             validationResult.addInvalidation(ValidationResult.InvalidMessage
                     .builder()
                     .type(String.class)
                     .field("name")
                     .message(String.format("name length must be between %d and %d",
-                            benchConstraints.getNameMinLength(), benchConstraints.getNameMaxLength()))
+                            benchConstraint.getNameMinLength(), benchConstraint.getNameMaxLength()))
                     .build());
         } else if (!namePattern.matcher(bench.getName()).matches()) {//Check if not matches regex pattern
             validationResult.addInvalidation(ValidationResult.InvalidMessage
@@ -63,21 +62,21 @@ public class BenchValidator implements Validator<Bench> {
 
         //Check Description constraints
         if(bench.getDescription()==null){
-            if(benchConstraints.isDescriptionRequired())
+            if(benchConstraint.isDescriptionRequired())
                 validationResult.addInvalidation(ValidationResult.InvalidMessage
                         .builder()
                         .type(String.class)
                         .field("description")
                         .message("description cannot be null")
                         .build());
-        }else if(bench.getDescription().length()< benchConstraints.getDescriptionMinLength() ||
-                bench.getDescription().length()> benchConstraints.getDescriptionMaxLength()) {
+        }else if(bench.getDescription().length()< benchConstraint.getDescriptionMinLength() ||
+                bench.getDescription().length()> benchConstraint.getDescriptionMaxLength()) {
             validationResult.addInvalidation(ValidationResult.InvalidMessage
                     .builder()
                     .type(String.class)
                     .field("description")
                     .message(String.format("description length must be between %d and %d",
-                            benchConstraints.getDescriptionMinLength(), benchConstraints.getDescriptionMaxLength()))
+                            benchConstraint.getDescriptionMinLength(), benchConstraint.getDescriptionMaxLength()))
                     .build());
         } else if (!descriptionPattern.matcher(bench.getDescription()).matches()) {//Check if not matches regex pattern
             validationResult.addInvalidation(ValidationResult.InvalidMessage
@@ -89,21 +88,21 @@ public class BenchValidator implements Validator<Bench> {
         }
 
         //Check expiration
-//        if(bench.getExpireTime()< benchConstraints.getExpirationMinDuration().toMillis()){
+//        if(bench.getExpireTime()< benchConstraint.getExpirationMinDuration().toMillis()){
 //            validationResult.addInvalidation(ValidationResult.InvalidMessage
 //                    .builder()
 //                    .type(Long.class)
 //                    .field("expiration")
 //                    .message(String.format("expiration must be bigger than %d ms",
-//                            benchConstraints.getExpirationMinDuration().toMillis()))
+//                            benchConstraint.getExpirationMinDuration().toMillis()))
 //                    .build());
-//        }else if(bench.getExpireTime()> benchConstraints.getExpirationMaxDuration().toMillis()){
+//        }else if(bench.getExpireTime()> benchConstraint.getExpirationMaxDuration().toMillis()){
 //            validationResult.addInvalidation(ValidationResult.InvalidMessage
 //                    .builder()
 //                    .type(Long.class)
 //                    .field("expiration")
 //                    .message(String.format("expiration must be smaller than %d ms",
-//                            benchConstraints.getExpirationMaxDuration().toMillis()))
+//                            benchConstraint.getExpirationMaxDuration().toMillis()))
 //                    .build());
 //        }
 

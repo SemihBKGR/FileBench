@@ -1,8 +1,5 @@
 spring:
   application:
     name: server
-    admin:
-      enabled: false
   profiles:
     active: dev
-

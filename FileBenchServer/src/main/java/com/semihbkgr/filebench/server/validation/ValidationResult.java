@@ -53,16 +53,20 @@ public class ValidationResult {
     }
 
     public boolean isValid() {
-        return invalidMessageList.size() == 0;
+        return invalidMessageList.isEmpty();
+    }
+
+    public boolean isInvalid(){
+        return !invalidMessageList.isEmpty();
     }
 
     public void throwIfInvalid() {
-        if (!isValid())
+        if (isInvalid())
             throw new ValidationException(this);
     }
 
     public void throwIfInvalid(String message) {
-        if (!isValid())
+        if (isInvalid())
             throw new ValidationException(message, this);
     }
 

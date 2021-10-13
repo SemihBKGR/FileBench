@@ -1,6 +1,6 @@
 package com.semihbkgr.filebench.server.config;
 
-import com.semihbkgr.filebench.server.validation.constraint.BenchConstraints;
+import com.semihbkgr.filebench.server.validation.BenchConstraint;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +14,8 @@ public class ValidationConfig {
     @Bean
     @Profile("dev")
     @ConfigurationProperties("validation.bench")
-    public BenchConstraints benchConstraint(){
-        return new BenchConstraints();
+    public BenchConstraint benchConstraint(){
+        return new BenchConstraint();
     }
 
 }

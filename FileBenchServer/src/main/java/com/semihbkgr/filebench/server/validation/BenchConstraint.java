@@ -1,4 +1,4 @@
-package com.semihbkgr.filebench.server.validation.constraint;
+package com.semihbkgr.filebench.server.validation;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.time.Duration;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class BenchConstraints {
+public class BenchConstraint {
 
     //Name
     private String nameRegex;

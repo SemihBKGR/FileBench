@@ -17,14 +17,9 @@ spring:
     codec:
       max-in-memory-size: 10MB
 
-# id generator custom properties
 id:
-  bench:
-    length: 7
-  file:
-    length: 25
+  length: 7
 
-#validation api custom properties
 validation:
   bench:
     nameRegex: "[A-Za-z0-9]"
