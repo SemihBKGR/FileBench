@@ -1,6 +1,7 @@
 package com.semihbkgr.filebench.server.api;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.semihbkgr.filebench.server.component.ImageScaleComponent;
 import com.semihbkgr.filebench.server.component.NumericalIdGenerator;
 import com.semihbkgr.filebench.server.component.TokenGenerator;
 import com.semihbkgr.filebench.server.model.Bench;
@@ -42,6 +43,7 @@ public class BenchApi {
     private final TokenGenerator tokenGenerator;
     private final BenchValidator benchValidator;
     private final FileValidator fileValidator;
+    private final ImageScaleComponent imageScaleComponent;
 
     @PostMapping(consumes = {APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
@@ -113,10 +115,14 @@ public class BenchApi {
     @GetMapping(value = "/c/{bench_id}/{file_id}", produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Flux<DataBuffer> getFileContent(@PathVariable("bench_id") String benchId,
-                                           @PathVariable("file_id") String fileId) {
-        return storageService.getFile(benchId, fileId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File content not found")));
+                                           @PathVariable("file_id") String fileId,
+                                           @RequestParam(value = "thumbnail", required = false, defaultValue = "false") boolean thumbnail) {
+        if (!thumbnail)
+            return storageService.getFile(benchId, fileId)
+                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File content not found")));
+        return imageScaleComponent.scale(storageService.getFile(benchId, fileId),"png",100,100);
     }
+
 
     @PutMapping("/{bench_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -232,7 +238,7 @@ public class BenchApi {
 
     private String extractExtension(@NonNull String filename) {
         if (filename.contains("."))
-            return filename.substring(filename.lastIndexOf('.')+1);
+            return filename.substring(filename.lastIndexOf('.') + 1);
         return null;
     }
 
