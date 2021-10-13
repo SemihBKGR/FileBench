@@ -22,22 +22,22 @@ id:
 
 validation:
   bench:
-    nameRegex: "^[a-zA-Z0-9]+$"
+    nameRegex: "^[a-zA-Z0-9 ]+$"
     nameRequired: true
     nameMinLength: 3
     nameMaxLength: 25
-    descriptionRegex: "^[a-zA-Z0-9]+$"
+    descriptionRegex: "^[a-zA-Z0-9 ]+$"
     descriptionReqired: false
     descriptionMinLength: 0
     descriptionMaxLength: 255
     expirationMinDuration: 1H
     expirationMaxDuration: 24H
   file:
-    nameRegex: "^[a-zA-Z0-9]+$"
+    nameRegex: "^[a-zA-Z0-9 ]+$"
     nameRequired: false
     nameMinLength: 3
     nameMaxLength: 25
-    descriptionRegex: "^[a-zA-Z0-9]+$"
+    descriptionRegex: "^[a-zA-Z0-9 ]+$"
     descriptionReqired: false
     descriptionMinLength: 0
     descriptionMaxLength: 255

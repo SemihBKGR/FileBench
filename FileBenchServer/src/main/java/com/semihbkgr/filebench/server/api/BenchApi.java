@@ -68,8 +68,7 @@ public class BenchApi {
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<File> createFile(@PathVariable("bench_id") String benchId,
                                  @RequestPart("content") Mono<FilePart> filePartMono,
-                                 @RequestParam("token") String token,
-                                 @RequestHeader("Content-Length") long contentLength) {
+                                 @RequestParam("token") String token) {
         return benchService.findById(benchId)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
                 .flatMap(bench -> {
@@ -77,8 +76,10 @@ public class BenchApi {
                         return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
                     if (bench.getFiles() == null)
                         bench.setFiles(new ArrayList<>());
-                    var file = fileOf(contentLength);
-                    return fileValidator.validate(file)
+
+                    return filePartMono.map(filePart -> {
+                        return fileOf(filePart.filename(),filePart.)
+                    }).flatMap(file->fileValidator.validate(file))
                             .flatMap(validationResult -> {
                                 if (validationResult.isInvalid())
                                     return Mono.error(new ValidationException(validationResult));
@@ -217,7 +218,7 @@ public class BenchApi {
                 .build();
     }
 
-    private File fileOf(long size) {
+    private File fileOf(String name,long size) {
         return File.builder()
                 .id(idGenerator.generate())
                 .name(null)
