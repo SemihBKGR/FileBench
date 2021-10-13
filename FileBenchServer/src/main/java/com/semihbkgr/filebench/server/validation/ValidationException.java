@@ -9,8 +9,18 @@ public class ValidationException extends ResponseStatusException {
     private final ValidationResult validationResult;
 
     public ValidationException(@NonNull ValidationResult validationResult) {
-        super(HttpStatus.BAD_REQUEST, validationResult.toString());
+        super(HttpStatus.BAD_REQUEST);
         this.validationResult = validationResult;
+    }
+
+    @Override
+    public String getMessage() {
+        return validationResult.getMessage();
+    }
+
+    @Override
+    public String getLocalizedMessage() {
+        return getMessage();
     }
 
 }

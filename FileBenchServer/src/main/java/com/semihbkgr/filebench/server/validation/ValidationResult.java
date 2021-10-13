@@ -58,15 +58,7 @@ public class ValidationResult {
     }
 
     public String getMessage(){
-        var messageSB=new StringBuilder();
-        var iterator=invalidationUnitList.iterator();
-        while(iterator.hasNext()){
-            var invalidationUnit=iterator.next();
-            messageSB.append(invalidationUnit.toString());
-            if(iterator.hasNext())
-                messageSB.append(System.lineSeparator());
-        }
-        return messageSB.toString();
+        return invalidationUnitList.toString();
     }
 
     @Data

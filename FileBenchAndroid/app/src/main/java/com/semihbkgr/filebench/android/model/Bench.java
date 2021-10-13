@@ -23,8 +23,8 @@ public class Bench implements Parcelable {
     private String name;
     private String description;
     private List<File> files;
+    private long expirationDurationMs;
     private long creationTimeMs;
-    private long expirationTimeMs;
     private long viewCount;
 
     public Bench() {
@@ -37,7 +37,7 @@ public class Bench implements Parcelable {
         this.description = description;
         this.files = files;
         this.creationTimeMs = creationTimeMs;
-        this.expirationTimeMs = expirationTimeMs;
+        this.expirationDurationMs = expirationTimeMs;
         this.viewCount = viewCount;
     }
 
@@ -47,8 +47,8 @@ public class Bench implements Parcelable {
         name = in.readString();
         description = in.readString();
         files = in.createTypedArrayList(File.CREATOR);
+        expirationDurationMs = in.readLong();
         creationTimeMs = in.readLong();
-        expirationTimeMs = in.readLong();
         viewCount = in.readLong();
     }
 
@@ -100,12 +100,12 @@ public class Bench implements Parcelable {
         this.creationTimeMs = creationTimeMs;
     }
 
-    public long getExpirationTimeMs() {
-        return expirationTimeMs;
+    public long getExpirationDurationMs() {
+        return expirationDurationMs;
     }
 
-    public void setExpirationTimeMs(long expirationTimeMs) {
-        this.expirationTimeMs = expirationTimeMs;
+    public void setExpirationDurationMs(long expirationTimeMs) {
+        this.expirationDurationMs = expirationTimeMs;
     }
 
     public long getViewCount() {
@@ -128,8 +128,8 @@ public class Bench implements Parcelable {
         dest.writeString(name);
         dest.writeString(description);
         dest.writeTypedList(files);
+        dest.writeLong(expirationDurationMs);
         dest.writeLong(creationTimeMs);
-        dest.writeLong(expirationTimeMs);
         dest.writeLong(viewCount);
     }
 
@@ -141,8 +141,8 @@ public class Bench implements Parcelable {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", files=" + files +
+                ", expirationDurationMs=" + expirationDurationMs +
                 ", creationTimeMs=" + creationTimeMs +
-                ", expirationTimeMs=" + expirationTimeMs +
                 ", viewCount=" + viewCount +
                 '}';
     }

@@ -21,12 +21,15 @@ public class BenchValidator implements Validator<Bench> {
         this.benchConstraints = benchConstraints;
         this.namePattern = Pattern.compile(benchConstraints.getNameRegex());
         this.descriptionPattern = Pattern.compile(benchConstraints.getDescriptionRegex());
+
     }
 
     @Override
     public Mono<ValidationResult> validate(Bench bench) {
-        bench.setName(bench.getName().isBlank() ? null : bench.getName().strip());
-        bench.setDescription(bench.getDescription().isBlank() ? null : bench.getDescription().strip());
+        if (bench.getName() != null)
+            bench.setName(bench.getName().isBlank() ? null : bench.getName().strip());
+        if (bench.getDescription() != null)
+            bench.setDescription(bench.getDescription().isBlank() ? null : bench.getDescription().strip());
         var validationResult = ValidationResult.empty();
         checkName(bench.getName()).ifPresent(validationResult::addInvalidationUnit);
         checkDescription(bench.getDescription()).ifPresent(validationResult::addInvalidationUnit);

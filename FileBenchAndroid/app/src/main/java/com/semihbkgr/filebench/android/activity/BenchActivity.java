@@ -56,7 +56,7 @@ public class BenchActivity extends AppCompatActivity {
         benchNameTextView.setText(bench.getName());
         benchDescriptionTextView.setText(bench.getDescription());
         benchCreationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs())));
-        benchExpirationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getExpirationTimeMs())));
+        benchExpirationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs()+bench.getExpirationDurationMs())));
         benchViewCountTextView.setText(String.valueOf(bench.getViewCount()));
         if(bench.getFiles()!=null)
             fileListView.setAdapter(new FileListAdapter(this,bench.getFiles()));

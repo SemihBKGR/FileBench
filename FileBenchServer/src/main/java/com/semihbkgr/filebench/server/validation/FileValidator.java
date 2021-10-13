@@ -27,9 +27,12 @@ public class FileValidator implements Validator<File> {
 
     @Override
     public Mono<ValidationResult> validate(File file) {
-        file.setName(file.getName().isBlank() ? null : file.getName().strip());
-        file.setDescription(file.getDescription().isBlank() ? null : file.getDescription().strip());
-        file.setDescription(file.getDescription().isBlank() ? null : file.getDescription().strip());
+        if (file.getName() != null)
+            file.setName(file.getName().isBlank() ? null : file.getName().strip());
+        if (file.getDescription() != null)
+            file.setDescription(file.getDescription().isBlank() ? null : file.getDescription().strip());
+        if (file.getLabel() != null)
+            file.setDescription(file.getDescription().isBlank() ? null : file.getDescription().strip());
         var validationResult = ValidationResult.empty();
         checkName(file.getName()).ifPresent(validationResult::addInvalidationUnit);
         checkDescription(file.getDescription()).ifPresent(validationResult::addInvalidationUnit);
