@@ -27,8 +27,4 @@ public class FileConstraints {
     private int labelMaxLength;
     private boolean labelRequired;
 
-    //Size
-    private int minValueByte;
-    private int maxValueByte;
-
 }

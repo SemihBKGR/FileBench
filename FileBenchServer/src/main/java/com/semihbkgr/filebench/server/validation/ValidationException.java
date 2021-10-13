@@ -1,15 +1,14 @@
 package com.semihbkgr.filebench.server.validation;
 
-public class ValidationException extends IllegalArgumentException{
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+public class ValidationException extends ResponseStatusException {
 
     private final ValidationResult validationResult;
 
-    public ValidationException(ValidationResult validationResult) {
-        this.validationResult=validationResult;
-    }
-
-    public ValidationException(String s, ValidationResult validationResult) {
-        super(s);
+    ValidationException(ValidationResult validationResult) {
+        super(HttpStatus.BAD_REQUEST,validationResult.toString());
         this.validationResult = validationResult;
     }
 

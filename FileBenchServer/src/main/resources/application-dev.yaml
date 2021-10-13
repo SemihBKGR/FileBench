@@ -45,8 +45,6 @@ validation:
     labelReqired: false
     labelMinLength: 0
     labelMaxLength: 255
-    sizeMinValueByte: 0
-    sizeMaxValueByte: 1,048,576
 
 storage:
   local:
