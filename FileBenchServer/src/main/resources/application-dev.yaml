@@ -32,6 +32,21 @@ validation:
     descriptionMaxLength: 255
     expirationMinDuration: 5s
     expirationMaxDuration: 60s
+  file:
+    nameRegex: "[A-Za-z0-9]"
+    nameRequired: true
+    nameMinLength: 3
+    nameMaxLength: 25
+    descriptionRegex: "[A-Za-z0-9]"
+    descriptionReqired: false
+    descriptionMinLength: 0
+    descriptionMaxLength: 255
+    labelRegex: "[A-Za-z0-9]"
+    labelReqired: false
+    labelMinLength: 0
+    labelMaxLength: 255
+    sizeMinValueByte: 0
+    sizeMaxValueByte: 1,048,576
 
 storage:
   local:

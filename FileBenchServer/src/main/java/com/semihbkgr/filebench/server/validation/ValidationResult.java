@@ -1,6 +1,5 @@
 package com.semihbkgr.filebench.server.validation;
 
-import com.semihbkgr.filebench.server.error.ValidationException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -11,26 +10,26 @@ import java.util.List;
 
 public class ValidationResult {
 
-    private final List<InvalidMessage> invalidMessageList;
+    private final List<InvalidationUnit> invalidationUnitList;
 
     private ValidationResult() {
-        this.invalidMessageList = new ArrayList<>();
+        this.invalidationUnitList = new ArrayList<>();
     }
 
     public static ValidationResult empty() {
         return new ValidationResult();
     }
 
-    public static ValidationResult of(@NonNull InvalidMessage invalidMessage) {
+    public static ValidationResult of(@NonNull ValidationResult.InvalidationUnit invalidationUnit) {
         ValidationResult validationResult = empty();
-        validationResult.addInvalidation(invalidMessage);
+        validationResult.addInvalidation(invalidationUnit);
         return validationResult;
     }
 
-    public static ValidationResult of(@NonNull InvalidMessage... invalidMessages) {
+    public static ValidationResult of(@NonNull InvalidationUnit... invalidationUnits) {
         ValidationResult validationResult = empty();
-        for (InvalidMessage invalidMessage : invalidMessages)
-            validationResult.addInvalidation(invalidMessage);
+        for (InvalidationUnit invalidationUnit : invalidationUnits)
+            validationResult.addInvalidation(invalidationUnit);
         return validationResult;
     }
 
@@ -48,16 +47,16 @@ public class ValidationResult {
         return validationResult;
     }
 
-    public void addInvalidation(@NonNull InvalidMessage invalidMessage) {
-        this.invalidMessageList.add(invalidMessage);
+    public void addInvalidation(@NonNull ValidationResult.InvalidationUnit invalidationUnit) {
+        this.invalidationUnitList.add(invalidationUnit);
     }
 
     public boolean isValid() {
-        return invalidMessageList.isEmpty();
+        return invalidationUnitList.isEmpty();
     }
 
     public boolean isInvalid(){
-        return !invalidMessageList.isEmpty();
+        return !invalidationUnitList.isEmpty();
     }
 
     public void throwIfInvalid() {
@@ -71,13 +70,13 @@ public class ValidationResult {
     }
 
     public void combine(@NonNull ValidationResult validationResult) {
-        this.invalidMessageList.addAll(validationResult.invalidMessageList);
+        this.invalidationUnitList.addAll(validationResult.invalidationUnitList);
     }
 
     @Getter
     @RequiredArgsConstructor
     @Builder
-    public static class InvalidMessage {
+    public static class InvalidationUnit {
         private final Class<?> type;
         private final String field;
         private final String message;

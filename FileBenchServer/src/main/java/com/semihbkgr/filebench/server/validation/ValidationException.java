@@ -1,6 +1,4 @@
-package com.semihbkgr.filebench.server.error;
-
-import com.semihbkgr.filebench.server.validation.ValidationResult;
+package com.semihbkgr.filebench.server.validation;
 
 public class ValidationException extends IllegalArgumentException{
 

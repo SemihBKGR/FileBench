@@ -4,12 +4,10 @@ import lombok.*;
 
 import java.time.Duration;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class BenchConstraint {
+public class BenchConstraints {
 
     //Name
     private String nameRegex;
