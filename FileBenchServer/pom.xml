@@ -18,6 +18,8 @@
     <properties>
         <java.version>11</java.version>
         <final-jar-name>file-bench-server</final-jar-name>
+        <hibernate-validator.version>7.0.1.Final</hibernate-validator.version>
+        <hazelcast-all.version>4.2</hazelcast-all.version>
     </properties>
 
     <dependencies>
@@ -38,7 +40,12 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast-all</artifactId>
-            <version>4.2</version>
+            <version>${hazelcast-all.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

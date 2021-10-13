@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -25,6 +26,7 @@ public class Bench {
     @JsonView(Views.BenchWriteAccess.class)
     private String token;
 
+    @NotNull(message = "Bench name must not be null")
     private String name;
     private String description;
 

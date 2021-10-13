@@ -9,6 +9,7 @@ import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
+import org.springframework.util.StreamUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -62,7 +63,7 @@ public class LocalStorageService implements StorageService {
 
     @Override
     public Flux<DataBuffer> getFile(@NonNull String benchId, @NonNull String fileId) {
-        return DataBufferUtils.read(resolveFilePath(benchId, fileId), new DefaultDataBufferFactory(), 256);
+        return DataBufferUtils.read(resolveFilePath(benchId, fileId), new DefaultDataBufferFactory(), StreamUtils.BUFFER_SIZE);
     }
 
     @Override
