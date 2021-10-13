@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">File Bench</string>
+    <string name="connection_fail_message">Connection fail</string>
+    <string name="connection_error_message">Connection error</string>
+    <string name="loading">Loading ...</string>
+    <string name="load">load</string>
 </resources>

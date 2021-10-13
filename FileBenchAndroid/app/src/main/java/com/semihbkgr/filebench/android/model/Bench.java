@@ -3,11 +3,21 @@ package com.semihbkgr.filebench.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Bench implements Parcelable {
 
+    public static final Creator<Bench> CREATOR = new Creator<Bench>() {
+        @Override
+        public Bench createFromParcel(Parcel in) {
+            return new Bench(in);
+        }
+
+        @Override
+        public Bench[] newArray(int size) {
+            return new Bench[size];
+        }
+    };
     private String id;
     private String token;
     private String name;
@@ -41,18 +51,6 @@ public class Bench implements Parcelable {
         expirationTimeMs = in.readLong();
         viewCount = in.readLong();
     }
-
-    public static final Creator<Bench> CREATOR = new Creator<Bench>() {
-        @Override
-        public Bench createFromParcel(Parcel in) {
-            return new Bench(in);
-        }
-
-        @Override
-        public Bench[] newArray(int size) {
-            return new Bench[size];
-        }
-    };
 
     public String getId() {
         return id;
@@ -133,6 +131,20 @@ public class Bench implements Parcelable {
         dest.writeLong(creationTimeMs);
         dest.writeLong(expirationTimeMs);
         dest.writeLong(viewCount);
+    }
+
+    @Override
+    public String toString() {
+        return "Bench{" +
+                "id='" + id + '\'' +
+                ", token='" + token + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", files=" + files +
+                ", creationTimeMs=" + creationTimeMs +
+                ", expirationTimeMs=" + expirationTimeMs +
+                ", viewCount=" + viewCount +
+                '}';
     }
 
 }

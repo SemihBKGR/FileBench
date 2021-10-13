@@ -59,4 +59,15 @@ public class ErrorModel {
         this.message = message;
     }
 
+    @Override
+    public String toString() {
+        return "ErrorModel{" +
+                "timestamp=" + timestamp +
+                ", status=" + status +
+                ", error='" + error + '\'' +
+                ", exception='" + exception + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
+
 }

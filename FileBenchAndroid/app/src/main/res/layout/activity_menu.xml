@@ -45,7 +45,7 @@
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:padding="10dp"
-                android:src="@drawable/download"
+                android:src="@drawable/download_active"
                 android:background="@android:color/transparent"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"/>
