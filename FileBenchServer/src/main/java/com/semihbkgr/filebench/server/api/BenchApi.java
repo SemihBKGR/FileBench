@@ -129,7 +129,7 @@ public class BenchApi {
                     if (!bench.getToken().equals(token))
                         return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
                     if (bench.getFiles() == null)
-                        return Mono.error(new IllegalArgumentException());
+                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"File not found"));
                     var fileOptional = bench.getFiles()
                             .stream()
                             .filter(file -> file.getId().equals(fileId))
@@ -159,7 +159,7 @@ public class BenchApi {
                     if (!bench.getToken().equals(token))
                         return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
                     if (bench.getFiles() == null)
-                        return Mono.error(new IllegalArgumentException());
+                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"File not found"));
                     var fileOptional = bench.getFiles()
                             .stream()
                             .filter(file -> file.getId().equals(fileId))
@@ -169,8 +169,7 @@ public class BenchApi {
                         return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,"File not found"));
                     var file = fileOptional.get();
                     file.setSize(contentLength);
-                    return storageService
-                            .updateFile(benchId, fileId, filePartMono)
+                    return storageService.updateFile(benchId, fileId, filePartMono)
                             .then(benchService.update(benchId, bench))
                             .then(Mono.just(file));
                 });
@@ -184,8 +183,8 @@ public class BenchApi {
                 .name(benchCreateDto.getName())
                 .description(benchCreateDto.getDescription())
                 .files(Collections.emptyList())
+                .expirationDurationMs(benchCreateDto.getExpirationDurationMs())
                 .creationTimeMs(currentTimeMs)
-                .expirationTimeMs(currentTimeMs + benchCreateDto.getExpirationDurationMs())
                 .viewCount(0L)
                 .build();
     }

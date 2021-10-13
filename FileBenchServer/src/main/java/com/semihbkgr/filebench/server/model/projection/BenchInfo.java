@@ -12,6 +12,7 @@ import java.util.List;
 public class BenchInfo {
 
     private String id;
-    private long expirationTimeMs;
+    private long expirationDurationMs;
+    private long creationTimeMs;
 
 }

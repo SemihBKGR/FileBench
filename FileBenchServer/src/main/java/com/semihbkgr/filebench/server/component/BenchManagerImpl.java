@@ -26,7 +26,7 @@ public class BenchManagerImpl implements BenchManager {
     public void checkForExpiredBench() {
         long currentTimeMs = System.currentTimeMillis();
         benchService.findAllInfo()
-                .filter(benchInfo -> currentTimeMs >= benchInfo.getExpirationTimeMs())
+                .filter(benchInfo -> currentTimeMs >= (benchInfo.getCreationTimeMs() + benchInfo.getExpirationDurationMs()))
                 .flatMap(benchInfo -> {
                     log.info("Bench has been expired, benchId: {}",benchInfo.getId());
                     return benchService.deleteById(benchInfo.getId())

@@ -30,8 +30,8 @@ public class Bench {
 
     @JsonView(Views.BenchReadAccess.class)
     private List<File> files;
+    private long expirationDurationMs;
     private long creationTimeMs;
-    private long expirationTimeMs;
     private long viewCount;
 
     public interface Views {
