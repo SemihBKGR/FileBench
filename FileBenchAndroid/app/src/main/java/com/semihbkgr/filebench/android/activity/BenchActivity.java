@@ -18,6 +18,7 @@ import com.semihbkgr.filebench.android.R;
 import com.semihbkgr.filebench.android.model.Bench;
 import com.semihbkgr.filebench.android.model.File;
 
+import java.util.Date;
 import java.util.List;
 
 public class BenchActivity extends AppCompatActivity {
@@ -35,7 +36,6 @@ public class BenchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bench);
-
         fileListView=findViewById(R.id.fileListView);
         benchNameTextView=findViewById(R.id.benchNameTextView);
         benchDescriptionTextView=findViewById(R.id.benchDescriptionTextView);
@@ -43,7 +43,6 @@ public class BenchActivity extends AppCompatActivity {
         benchExpirationTimeTextView =findViewById(R.id.benchExpirationTimeTextView);
         benchViewCountTextView=findViewById(R.id.benchViewCountTextView);
         fileListView=findViewById(R.id.fileListView);
-
         Bench bench=getIntent().getParcelableExtra(AppContext.Constants.INTENT_EXTRA_BENCH);
         if(bench==null){
             Toast.makeText(this,"Fail",Toast.LENGTH_SHORT).show();
@@ -51,14 +50,13 @@ public class BenchActivity extends AppCompatActivity {
             startActivity(intent);
         } else
             loadBench(bench);
-
     }
 
     private void loadBench(@NonNull Bench bench){
         benchNameTextView.setText(bench.getName());
         benchDescriptionTextView.setText(bench.getDescription());
-        benchCreationTimeTextView.setText(String.valueOf(bench.getCreationTimeMs()));
-        benchExpirationTimeTextView.setText(String.valueOf(bench.getExpirationTimeMs()));
+        benchCreationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs())));
+        benchExpirationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getExpirationTimeMs())));
         benchViewCountTextView.setText(String.valueOf(bench.getViewCount()));
         if(bench.getFiles()!=null)
             fileListView.setAdapter(new FileListAdapter(this,bench.getFiles()));

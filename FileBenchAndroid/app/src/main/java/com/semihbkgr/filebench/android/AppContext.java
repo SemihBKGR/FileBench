@@ -6,6 +6,11 @@ import com.semihbkgr.filebench.android.net.BenchClient;
 import com.semihbkgr.filebench.android.net.BenchClientImpl;
 import okhttp3.OkHttpClient;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 public class AppContext {
 
     public static AppContext instance;
@@ -13,12 +18,13 @@ public class AppContext {
     public final Gson gson;
     public final OkHttpClient httpClient;
     public final BenchClient benchClient;
-
+    public final DateFormat dateFormat;
 
     private AppContext(){
         this.gson=new GsonBuilder().create();
         this.httpClient=new OkHttpClient.Builder().build();
         this.benchClient=new BenchClientImpl(httpClient,gson);
+        this.dateFormat=new SimpleDateFormat("HH:mm:ss MM/dd/yyyy",Locale.getDefault());
     }
 
     public static void initialize(){
