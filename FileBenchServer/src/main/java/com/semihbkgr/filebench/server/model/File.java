@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,8 +14,6 @@ import javax.validation.constraints.NotNull;
 public class File {
 
     private String id;
-
-    @NotNull(message = "File name must not be null")
     private String name;
     private String description;
     private String label;
