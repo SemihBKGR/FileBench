@@ -18,6 +18,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
@@ -89,6 +90,12 @@ public class BenchApi {
                                     return Mono.error(new ValidationException(validationResult));
                                 return storageService.saveFile(benchId, file.getId(), filePartMono)
                                         .then(benchService.update(benchId, bench))
+                                        .flatMap(updatedBench->{
+                                            var extension=extractExtension(file);
+                                            if(isImage(extension))
+                                                return storageService.saveFile(benchId, file.getId().concat("-thumbnail"), imageScaleComponent.scale(filePartMono,extension,100,100));
+                                            return Flux.empty();
+                                        })
                                         .thenReturn(file);
                             });
                 });
@@ -249,6 +256,10 @@ public class BenchApi {
             return filename.substring(0, filename.lastIndexOf('.')).concat(".").concat(extension);
         else
             return filename.concat(".").concat(extension);
+    }
+
+    private boolean isImage(String extension){
+        return extension.equals("png") || extension.equals("jpg");
     }
 
 }
