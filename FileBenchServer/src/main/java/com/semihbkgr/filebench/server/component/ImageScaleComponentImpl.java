@@ -24,9 +24,9 @@ public class ImageScaleComponentImpl implements ImageScaleComponent {
         return content
                 .collectList()
                 .map(dataBuffers -> {
-                    var baOutputStream=new ByteArrayOutputStream();
-                    for(var dataBuffer:dataBuffers){
-                        var bytes=new byte[dataBuffer.readableByteCount()];
+                    var baOutputStream = new ByteArrayOutputStream();
+                    for (var dataBuffer : dataBuffers) {
+                        var bytes = new byte[dataBuffer.readableByteCount()];
                         dataBuffer.read(bytes);
                         try {
                             baOutputStream.write(bytes);
@@ -36,30 +36,30 @@ public class ImageScaleComponentImpl implements ImageScaleComponent {
                     }
                     return baOutputStream.toByteArray();
                 })
-                .map(bytes->{
+                .map(bytes -> {
                     try {
-                        var image=ImageIO.read(new ByteArrayInputStream(bytes))
-                                .getScaledInstance(width,height, Image.SCALE_DEFAULT);
+                        var image = ImageIO.read(new ByteArrayInputStream(bytes))
+                                .getScaledInstance(width, height, Image.SCALE_DEFAULT);
                         var scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                        scaledImage.getGraphics().drawImage(image,0,0,null);
+                        scaledImage.getGraphics().drawImage(image, 0, 0, null);
                         return scaledImage;
                     } catch (IOException e) {
                         throw new ImageScaleException(e);
                     }
                 })
-                .flatMapMany(scaledImage->{
-                    return DataBufferUtils.readInputStream(()->{
-                        var baOutputStream=new ByteArrayOutputStream();
-                        ImageIO.write(scaledImage,extension,baOutputStream);
+                .flatMapMany(scaledImage -> {
+                    return DataBufferUtils.readInputStream(() -> {
+                        var baOutputStream = new ByteArrayOutputStream();
+                        ImageIO.write(scaledImage, extension, baOutputStream);
                         return new ByteArrayInputStream(baOutputStream.toByteArray());
-                    },new DefaultDataBufferFactory(), StreamUtils.BUFFER_SIZE);
+                    }, new DefaultDataBufferFactory(), StreamUtils.BUFFER_SIZE);
                 });
     }
 
     public static class ImageScaleException extends ResponseStatusException {
 
         public ImageScaleException(Throwable cause) {
-            super(HttpStatus.INTERNAL_SERVER_ERROR, "Error while scaling image",cause);
+            super(HttpStatus.INTERNAL_SERVER_ERROR, "Error while scaling image", cause);
         }
 
         public ImageScaleException(String reason, Throwable cause) {

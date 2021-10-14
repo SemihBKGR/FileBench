@@ -16,6 +16,8 @@ spring:
       auto-index-creation: true
     codec:
       max-in-memory-size: 10MB
+  cache:
+    type: hazelcast
 
 id:
   length: 7
@@ -56,3 +58,6 @@ bench:
 
 file:
   size-max-byte: 1.048.576
+
+hazecast:
+  instance: hc-instnace
