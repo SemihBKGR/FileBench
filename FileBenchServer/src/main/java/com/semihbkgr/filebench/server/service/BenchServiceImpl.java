@@ -26,7 +26,7 @@ public class BenchServiceImpl implements BenchService {
 
     @Override
     public Flux<BenchInfo> findAllInfo() {
-        return benchRepository.findAllBy();
+        return benchRepository.findAllInfo();
     }
 
     @Override
