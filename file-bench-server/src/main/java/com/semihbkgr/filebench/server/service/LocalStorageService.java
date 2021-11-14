@@ -72,7 +72,7 @@ public class LocalStorageService implements StorageService {
             try {
                 FileSystemUtils.deleteRecursively(resolveBenchPath(benchId));
             } catch (IOException e) {
-                voidMonoSink.error(e);
+                log.error(e.getMessage());
             }
             voidMonoSink.success();
         });

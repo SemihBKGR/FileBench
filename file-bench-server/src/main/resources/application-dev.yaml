@@ -20,7 +20,7 @@ spring:
     type: hazelcast
 
 id:
-  length: 7
+  length: 9
 
 validation:
   bench:
@@ -61,3 +61,11 @@ file:
 
 hazecast:
   instance: hc-instnace
+
+logging:
+  level:
+    root: info
+    com:
+      semihbkgr:
+        filebench:
+          server: debug

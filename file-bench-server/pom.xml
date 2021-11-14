@@ -20,6 +20,7 @@
         <final-jar-name>file-bench-server</final-jar-name>
         <hibernate-validator.version>7.0.1.Final</hibernate-validator.version>
         <hazelcast-all.version>4.2</hazelcast-all.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
     </properties>
 
     <dependencies>
@@ -37,15 +38,19 @@
             <version>${hazelcast-all.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -82,7 +87,6 @@
     </dependencyManagement>
 
     <build>
-        <finalName>${final-jar-name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
