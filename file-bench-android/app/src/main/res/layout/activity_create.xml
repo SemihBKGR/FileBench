@@ -6,6 +6,7 @@
         android:layout_height="match_parent"
         tools:context=".activity.CreateActivity"
         android:orientation="vertical"
+        android:padding="20dp"
         android:gravity="center">
 
     <EditText
@@ -13,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
+            android:layout_margin="10dp"
             android:ems="10"/>
 
     <EditText
@@ -21,17 +23,20 @@
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:gravity="start|top"
+            android:layout_margin="10dp"
             android:ems="10"/>
 
     <Spinner
             android:id="@+id/expirationTimeSpinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"/>
 
     <Button
             android:id="@+id/createButton"
             android:text="Create"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"/>
 
 </LinearLayout>

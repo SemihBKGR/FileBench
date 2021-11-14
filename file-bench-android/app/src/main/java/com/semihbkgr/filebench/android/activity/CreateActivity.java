@@ -2,7 +2,6 @@ package com.semihbkgr.filebench.android.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -13,6 +12,8 @@ import com.semihbkgr.filebench.android.model.Bench;
 import com.semihbkgr.filebench.android.net.ClientCallback;
 import com.semihbkgr.filebench.android.net.ErrorModel;
 import com.semihbkgr.filebench.android.net.dto.BenchCreateDto;
+
+import java.util.Locale;
 
 import static com.semihbkgr.filebench.android.AppContext.Constants.INTENT_EXTRA_BENCH;
 
@@ -48,14 +49,14 @@ public class CreateActivity extends AppCompatActivity {
         String name = nameEditText.getEditableText().toString();
         String description = descriptionEditText.getEditableText().toString();
         Durations duration = (Durations) expirationTimeSpinner.getSelectedItem();
-        BenchCreateDto benchCreateDto=new BenchCreateDto(name,description,duration.getMillis());
+        BenchCreateDto benchCreateDto = new BenchCreateDto(name, description, duration.getMillis());
         AppContext.instance.benchClient.createBench(benchCreateDto, new ClientCallback<Bench>() {
             @Override
             public void success(Bench data) {
+                Log.i(TAG, "success: bench has been created successfully");
+                Intent intent = new Intent(CreateActivity.this, ManageActivity.class);
+                intent.putExtra(INTENT_EXTRA_BENCH, data);
                 runOnUiThread(() -> {
-                    Toast.makeText(CreateActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                    Intent intent=new Intent(CreateActivity.this,ManageActivity.class);
-                    intent.putExtra(INTENT_EXTRA_BENCH, data);
                     startActivity(intent);
                     createButton.setClickable(true);
                 });
@@ -63,45 +64,46 @@ public class CreateActivity extends AppCompatActivity {
 
             @Override
             public void error(ErrorModel errorModel) {
+                Log.w(TAG, "error: error while creating bench, message: " + errorModel.getMessage());
                 runOnUiThread(() -> {
-                    Toast.makeText(CreateActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateActivity.this, errorModel.getMessage(), Toast.LENGTH_SHORT).show();
                     createButton.setClickable(true);
                 });
             }
 
             @Override
             public void fail(Throwable t) {
-                runOnUiThread(() ->{
-                    Toast.makeText(CreateActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "fail: fail while creating bench");
+                t.printStackTrace();
+                runOnUiThread(() -> {
+                    Toast.makeText(CreateActivity.this, "Fail while create bench", Toast.LENGTH_SHORT).show();
                     createButton.setClickable(true);
                 });
             }
         });
     }
 
-    private enum Durations{
+    private enum Durations {
 
-        _1H(1),
-        _3H(3),
-        _9H(9),
-        _12H(12),
-        _24H(24);
+        H1(1),
+        H3(3),
+        H9(9);
 
         public final int hour;
 
         Durations(int hour) {
-            this.hour=hour;
+            this.hour = hour;
         }
 
-        public long getMillis(){
-            return hour* 3_600_000L;
+        public long getMillis() {
+            return hour * 3_600_000L;
         }
 
         @Override
         public String toString() {
-            if(hour==1)
-                return String.format("%d Hour",hour);
-            return String.format("%d Hours",hour);
+            if (hour == 1)
+                return String.format(Locale.getDefault(), "%d Hour", hour);
+            return String.format(Locale.getDefault(), "%d Hours", hour);
         }
 
     }
