@@ -3,7 +3,6 @@ package com.semihbkgr.filebench.server.model;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -14,34 +13,36 @@ import java.util.List;
 @Builder
 @Document(collection = "bench")
 @With
-@JsonView(Bench.Views.BenchInfo.class)
+@JsonView(Bench.Views.BenchDetails.class)
 public class Bench {
 
     @Id
-    @JsonView(Views.BenchReadAccess.class)
     private String id;
 
-    @Indexed(unique = true, name = "token")
-    @JsonView(Views.BenchWriteAccess.class)
+    @JsonView(Bench.Views.BenchSecrets.class)
     private String token;
+
     private String name;
+
     private String description;
 
-    @JsonView(Views.BenchReadAccess.class)
     private List<File> files;
+
     private long expirationDurationMs;
+
     private long creationTimeMs;
+
     private long viewCount;
 
-    public interface Views {
 
-        interface BenchInfo {
+    public static class Views {
+
+        public interface BenchDetails {
+
         }
 
-        interface BenchReadAccess extends BenchInfo {
-        }
+        public interface BenchSecrets extends BenchDetails {
 
-        interface BenchWriteAccess extends BenchReadAccess {
         }
 
     }

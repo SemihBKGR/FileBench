@@ -1,18 +1,17 @@
-package com.semihbkgr.filebench.server.model.projection;
+package com.semihbkgr.filebench.server.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BenchInfo {
+public class BenchInfoDto {
 
     private String id;
     private long expirationDurationMs;
     private long creationTimeMs;
+
 
 }

@@ -10,14 +10,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonView(Bench.Views.BenchInfo.class)
+@JsonView(Bench.Views.BenchDetails.class)
 public class File {
 
     private String id;
+
     private String name;
+
     private String description;
+
     private String label;
+
     private long size;
+
     private long downloadCount;
 
 }
