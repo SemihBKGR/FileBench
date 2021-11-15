@@ -27,7 +27,6 @@ public class BenchActivity extends AppCompatActivity {
 
     private ListView fileListView;
     private TextView benchNameTextView;
-    private TextView benchDescriptionTextView;
     private TextView benchCreationTimeTextView;
     private TextView benchExpirationTimeTextView;
     private TextView benchViewCountTextView;
@@ -38,7 +37,6 @@ public class BenchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bench);
         fileListView=findViewById(R.id.fileListView);
         benchNameTextView=findViewById(R.id.benchNameTextView);
-        benchDescriptionTextView=findViewById(R.id.benchDescriptionTextView);
         benchCreationTimeTextView =findViewById(R.id.benchCreationTimeTextView);
         benchExpirationTimeTextView =findViewById(R.id.benchExpirationTimeTextView);
         benchViewCountTextView=findViewById(R.id.benchViewCountTextView);
@@ -54,7 +52,6 @@ public class BenchActivity extends AppCompatActivity {
 
     private void loadBench(@NonNull Bench bench){
         benchNameTextView.setText(bench.getName());
-        benchDescriptionTextView.setText(bench.getDescription());
         benchCreationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs())));
         benchExpirationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs()+bench.getExpirationDurationMs())));
         benchViewCountTextView.setText(String.valueOf(bench.getViewCount()));
@@ -76,8 +73,6 @@ public class BenchActivity extends AppCompatActivity {
                 listItem = LayoutInflater.from(getContext()).inflate(R.layout.one_line_file,parent,false);
             File file=getItem(position);
             listItem.<TextView>findViewById(R.id.fileNameTextView).setText(file.getName());
-            listItem.<TextView>findViewById(R.id.fileDescriptionTextView).setText(file.getDescription());
-            listItem.<TextView>findViewById(R.id.fileLabelTextView).setText(file.getLabel());
             listItem.<TextView>findViewById(R.id.fileSizeTextView).setText(String.valueOf(file.getSize()));
             return listItem;
         }

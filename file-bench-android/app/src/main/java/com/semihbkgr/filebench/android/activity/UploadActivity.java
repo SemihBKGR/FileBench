@@ -1,15 +1,17 @@
 package com.semihbkgr.filebench.android.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,19 +20,16 @@ import com.semihbkgr.filebench.android.AppContext;
 import com.semihbkgr.filebench.android.R;
 import com.semihbkgr.filebench.android.model.Bench;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class ManageActivity extends AppCompatActivity {
+public class UploadActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURES = 1;
-    private static final String TAG = ManageActivity.class.getName();
+    private static final String TAG = UploadActivity.class.getName();
 
     private TextView nameTextView;
-    private TextView descriptionTextView;
     private TextView creationTimeTextView;
+    private TextView expirationTimeTextView;
     private Button addButton;
     private Button uploadButton;
     private GridView gridView;
@@ -41,18 +40,17 @@ public class ManageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage);
+        setContentView(R.layout.activity_upload);
 
         Log.i(TAG, "onCreate");
 
         //find components
-        nameTextView = findViewById(R.id.tvName);
-        descriptionTextView = findViewById(R.id.tvDescription);
-        creationTimeTextView = findViewById(R.id.tvCreationTime);
+        nameTextView = findViewById(R.id.nameTextView);
+        creationTimeTextView = findViewById(R.id.creationTimeTextView);
+        expirationTimeTextView = findViewById(R.id.expirationTimeTextView);
         addButton = findViewById(R.id.addButton);
         uploadButton = findViewById(R.id.uploadButton);
-        //fileListView = findViewById(R.id.fileListView);
-        gridView=findViewById(R.id.imageGrid);
+        gridView = findViewById(R.id.imageGrid);
 
         //get bench
         this.bench = getIntent().getParcelableExtra(AppContext.Constants.INTENT_EXTRA_BENCH);
@@ -60,17 +58,15 @@ public class ManageActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CreateActivity.class);
             startActivity(intent);
         }
+        nameTextView.setText(bench.getName());
+        creationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs())));
+        expirationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs() + bench.getExpirationDurationMs())));
+
         this.uriSet = new HashSet<>();
 
         //set listeners
         addButton.setOnClickListener(this::onAddButtonClick);
         uploadButton.setOnClickListener(this::onUploadButtonClick);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.i(TAG, "onStart");
     }
 
     @SuppressWarnings("deprecation")
@@ -92,8 +88,8 @@ public class ManageActivity extends AppCompatActivity {
         Log.i(TAG, "onActivityResult: resultCode: " + resultCode + ", requestCode: " + requestCode);
         if (requestCode == SELECT_PICTURES) {
             if (resultCode == Activity.RESULT_OK) {
+                List<Uri> uriList = new ArrayList<>();
                 if (resultData.getClipData() != null) {
-                    List<Uri> uriList = new ArrayList<>();
                     int count = resultData.getClipData().getItemCount();
                     int currentItem = 0;
                     while (currentItem < count) {
@@ -101,14 +97,19 @@ public class ManageActivity extends AppCompatActivity {
                         uriList.add(uri);
                         currentItem++;
                     }
-                    uriSet.addAll(uriList);
                 } else if (resultData.getData() != null) {
                     Uri uri = resultData.getData();
-                    uriSet.add(uri);
+                    uriList.add(uri);
                 }
-                FileListCreateViewAdapter adapter = new FileListCreateViewAdapter(this, new ArrayList<>(uriSet));
-                gridView.setAdapter(adapter);
-
+                uriSet.addAll(uriList);
+                FileListCreateViewAdapter adapter = (FileListCreateViewAdapter) gridView.getAdapter();
+                if (adapter == null) {
+                    adapter = new FileListCreateViewAdapter(this, new ArrayList<>(uriSet));
+                    gridView.setAdapter(adapter);
+                }else{
+                    uriList.removeAll(uriSet);
+                    adapter.addAll(uriList.toArray(new Uri[0]));
+                }
             }
         }
     }
@@ -125,7 +126,24 @@ public class ManageActivity extends AppCompatActivity {
             Uri uri = getItem(position);
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.one_line_file_create, parent, false);
-            convertView.<ImageView>findViewById(R.id.imageView).setImageURI(uri);
+            ImageView imageView = convertView.findViewById(R.id.imageView);
+            imageView.setImageURI(uri);
+            imageView.setOnLongClickListener(v -> {
+                remove(uri);
+                return false;
+            });
+            imageView.setOnClickListener(view -> {
+                Log.i(TAG, "getView: image clicked");
+                Dialog dialog = new Dialog(getContext());
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setCancelable(true);
+                dialog.setContentView(R.layout.dialog_image);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                ImageView fullImageview = dialog.findViewById(R.id.imageView);
+                fullImageview.setImageURI(uri);
+                fullImageview.setOnClickListener(v -> dialog.dismiss());
+                dialog.show();
+            });
             return convertView;
         }
 

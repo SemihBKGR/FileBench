@@ -12,7 +12,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.FileBenchAndroid">
-        <activity android:name=".activity.ManageActivity">
+        <activity android:name=".activity.UploadActivity">
         </activity>
         <activity android:name=".activity.CreateActivity">
         </activity>

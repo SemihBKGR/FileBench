@@ -18,10 +18,10 @@ public class Bench implements Parcelable {
             return new Bench[size];
         }
     };
+
     private String id;
     private String token;
     private String name;
-    private String description;
     private List<File> files;
     private long expirationDurationMs;
     private long creationTimeMs;
@@ -30,11 +30,10 @@ public class Bench implements Parcelable {
     public Bench() {
     }
 
-    public Bench(String id, String token, String name, String description, List<File> files, long creationTimeMs, long expirationTimeMs, long viewCount) {
+    public Bench(String id, String token, String name, List<File> files, long creationTimeMs, long expirationTimeMs, long viewCount) {
         this.id = id;
         this.token = token;
         this.name = name;
-        this.description = description;
         this.files = files;
         this.creationTimeMs = creationTimeMs;
         this.expirationDurationMs = expirationTimeMs;
@@ -45,7 +44,6 @@ public class Bench implements Parcelable {
         id = in.readString();
         token = in.readString();
         name = in.readString();
-        description = in.readString();
         files = in.createTypedArrayList(File.CREATOR);
         expirationDurationMs = in.readLong();
         creationTimeMs = in.readLong();
@@ -74,14 +72,6 @@ public class Bench implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public List<File> getFiles() {
@@ -126,7 +116,6 @@ public class Bench implements Parcelable {
         dest.writeString(id);
         dest.writeString(token);
         dest.writeString(name);
-        dest.writeString(description);
         dest.writeTypedList(files);
         dest.writeLong(expirationDurationMs);
         dest.writeLong(creationTimeMs);
@@ -139,7 +128,6 @@ public class Bench implements Parcelable {
                 "id='" + id + '\'' +
                 ", token='" + token + '\'' +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
                 ", files=" + files +
                 ", expirationDurationMs=" + expirationDurationMs +
                 ", creationTimeMs=" + creationTimeMs +
@@ -160,7 +148,6 @@ public class Bench implements Parcelable {
         if (!id.equals(bench.id)) return false;
         if (!token.equals(bench.token)) return false;
         if (!name.equals(bench.name)) return false;
-        if (!description.equals(bench.description)) return false;
         return files.equals(bench.files);
     }
 
@@ -169,7 +156,6 @@ public class Bench implements Parcelable {
         int result = id.hashCode();
         result = 31 * result + token.hashCode();
         result = 31 * result + name.hashCode();
-        result = 31 * result + description.hashCode();
         result = 31 * result + files.hashCode();
         result = 31 * result + (int) (expirationDurationMs ^ (expirationDurationMs >>> 32));
         result = 31 * result + (int) (creationTimeMs ^ (creationTimeMs >>> 32));

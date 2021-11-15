@@ -18,19 +18,15 @@ public class File implements Parcelable {
     };
     private String id;
     private String name;
-    private String description;
-    private String label;
     private long size;
     private long downloadCount;
 
     public File() {
     }
 
-    public File(String id, String name, String description, String label, long size, long downloadCount) {
+    public File(String id, String name, long size, long downloadCount) {
         this.id = id;
         this.name = name;
-        this.description = description;
-        this.label = label;
         this.size = size;
         this.downloadCount = downloadCount;
     }
@@ -38,8 +34,6 @@ public class File implements Parcelable {
     protected File(Parcel in) {
         id = in.readString();
         name = in.readString();
-        description = in.readString();
-        label = in.readString();
         size = in.readLong();
         downloadCount = in.readLong();
     }
@@ -58,22 +52,6 @@ public class File implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     public long getSize() {
@@ -101,8 +79,6 @@ public class File implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(name);
-        dest.writeString(description);
-        dest.writeString(label);
         dest.writeLong(size);
         dest.writeLong(downloadCount);
     }
@@ -112,13 +88,10 @@ public class File implements Parcelable {
         return "File{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", label='" + label + '\'' +
                 ", size=" + size +
                 ", downloadCount=" + downloadCount +
                 '}';
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -130,17 +103,13 @@ public class File implements Parcelable {
         if (size != file.size) return false;
         if (downloadCount != file.downloadCount) return false;
         if (!id.equals(file.id)) return false;
-        if (!name.equals(file.name)) return false;
-        if (!description.equals(file.description)) return false;
-        return label.equals(file.label);
+        return name.equals(file.name);
     }
 
     @Override
     public int hashCode() {
         int result = id.hashCode();
         result = 31 * result + name.hashCode();
-        result = 31 * result + description.hashCode();
-        result = 31 * result + label.hashCode();
         result = 31 * result + (int) (size ^ (size >>> 32));
         result = 31 * result + (int) (downloadCount ^ (downloadCount >>> 32));
         return result;

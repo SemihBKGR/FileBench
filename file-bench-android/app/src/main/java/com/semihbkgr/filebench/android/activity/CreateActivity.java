@@ -11,7 +11,6 @@ import com.semihbkgr.filebench.android.R;
 import com.semihbkgr.filebench.android.model.Bench;
 import com.semihbkgr.filebench.android.net.ClientCallback;
 import com.semihbkgr.filebench.android.net.ErrorModel;
-import com.semihbkgr.filebench.android.net.dto.BenchCreateDto;
 
 import java.util.Locale;
 
@@ -22,7 +21,6 @@ public class CreateActivity extends AppCompatActivity {
     private static final String TAG = CreateActivity.class.getName();
 
     private EditText nameEditText;
-    private EditText descriptionEditText;
     private Spinner expirationTimeSpinner;
     private Button createButton;
 
@@ -31,7 +29,6 @@ public class CreateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
         nameEditText = findViewById(R.id.nameEditText);
-        descriptionEditText = findViewById(R.id.descriptionEditText);
         expirationTimeSpinner = findViewById(R.id.expirationTimeSpinner);
         createButton = findViewById(R.id.createButton);
     }
@@ -47,14 +44,15 @@ public class CreateActivity extends AppCompatActivity {
         Log.i(TAG, "onCreateButtonClicked");
         createButton.setClickable(false);
         String name = nameEditText.getEditableText().toString();
-        String description = descriptionEditText.getEditableText().toString();
         Durations duration = (Durations) expirationTimeSpinner.getSelectedItem();
-        BenchCreateDto benchCreateDto = new BenchCreateDto(name, description, duration.getMillis());
-        AppContext.instance.benchClient.createBench(benchCreateDto, new ClientCallback<Bench>() {
+        Bench bench = new Bench();
+        bench.setName(name);
+        bench.setExpirationDurationMs(duration.getMillis());
+        AppContext.instance.benchClient.createBench(bench, new ClientCallback<Bench>() {
             @Override
             public void success(Bench data) {
                 Log.i(TAG, "success: bench has been created successfully");
-                Intent intent = new Intent(CreateActivity.this, ManageActivity.class);
+                Intent intent = new Intent(CreateActivity.this, UploadActivity.class);
                 intent.putExtra(INTENT_EXTRA_BENCH, data);
                 runOnUiThread(() -> {
                     startActivity(intent);

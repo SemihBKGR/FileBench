@@ -4,27 +4,31 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context=".activity.ManageActivity"
+              tools:context=".activity.UploadActivity"
               android:padding="20dp">
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:id="@+id/tvName"
+              android:id="@+id/nameTextView"
               android:textColor="@color/black"
               android:textSize="24sp"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:id="@+id/tvDescription"/>
+              android:id="@+id/creationTimeTextView"
+              android:textColor="@color/black"
+              android:textSize="24sp"/>
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:id="@+id/tvCreationTime"/>
+              android:id="@+id/expirationTimeTextView"
+              android:textColor="@color/black"
+              android:textSize="24sp"/>
 
-    <Button android:layout_width="match_parent"
+    <Button android:text="@string/add"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/addButton"/>
-
 
     <GridView android:id="@+id/imageGrid"
               android:numColumns="3"
@@ -33,10 +37,10 @@
               android:stretchMode="columnWidth"
               android:layout_width="fill_parent"
               android:scrollbars="horizontal"
-              android:layout_height="fill_parent"/>
+              android:layout_height="fill_parent"
+              android:layout_weight="100"/>
 
-    <Button
-            android:text="Upload"
+    <Button android:text="@string/upload"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/uploadButton"

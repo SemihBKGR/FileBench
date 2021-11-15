@@ -3,8 +3,6 @@ package com.semihbkgr.filebench.android.net;
 import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.semihbkgr.filebench.android.model.Bench;
-import com.semihbkgr.filebench.android.net.dto.BenchCreateDto;
-import com.semihbkgr.filebench.android.net.dto.BenchUpdateDto;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -28,15 +26,20 @@ public class BenchClientImpl implements BenchClient {
     }
 
     @Override
-    public void createBench(@NonNull BenchCreateDto benchCreateDto, @NonNull ClientCallback<? super Bench> callback) {
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(benchCreateDto));
+    public void createBench(@NonNull Bench bench, @NonNull ClientCallback<? super Bench> callback) {
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(bench));
         Request request = new Request.Builder().url(url + "/bench").post(requestBody).build();
         enqueueRequest(request, callback);
     }
 
     @Override
-    public void updateBench(String benchId, String token, BenchUpdateDto benchUpdateDto, ClientCallback<? super Bench> callback) {
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(benchUpdateDto));
+    public void uploadFile() {
+
+    }
+
+    @Override
+    public void updateBench(String benchId, String token, Bench bench, ClientCallback<? super Bench> callback) {
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), gson.toJson(bench));
         Request request = new Request.Builder().url(url + "/bench/" + benchId + "?token=" + token).post(requestBody).build();
         enqueueRequest(request, callback);
     }

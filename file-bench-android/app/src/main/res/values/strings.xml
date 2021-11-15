@@ -8,4 +8,7 @@
     <string name="file_name">File Name</string>
     <string name="file_label">File Label</string>
     <string name="file_description">File Description</string>
+    <string name="add">Add</string>
+    <string name="upload">Upload</string>
+    <string name="create">Create</string>
 </resources>
