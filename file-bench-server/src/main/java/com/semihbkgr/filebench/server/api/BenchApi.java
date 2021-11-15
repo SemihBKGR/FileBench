@@ -85,10 +85,9 @@ public class BenchApi {
 
     @PostMapping("/{bench_id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<File> createFile(@PathVariable("bench_id") String benchId,
-                                 @RequestParam("token") String token,
-                                 @RequestPart("content") Mono<FilePart> filePartMono,
-                                 @RequestHeader("Content-Length") long contentLength) {
+    public Mono<Bench> createFile(@PathVariable("bench_id") String benchId,
+                                  @RequestParam("token") String token,
+                                  @RequestPart("file") Flux<FilePart> filePartFlux) {
         return benchService.findById(benchId)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
                 .flatMap(bench -> {
@@ -96,18 +95,14 @@ public class BenchApi {
                         return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
                     if (bench.getFiles() == null)
                         bench.setFiles(new ArrayList<>());
-                    var file = new File();
-                    file.setId(idGenerator.generate());
-                    file.setSize(contentLength);
-                    return storageService.saveFile(benchId, file.getId(), filePartMono)
-                            .flatMap(filename -> {
-                                file.setName(filename);
-                                bench.getFiles().add(file);
-                                return benchService.save(bench);
-                            })
-                            .thenReturn(file);
-                })
-                .doOnNext(file -> log.info("File | create - benchId: {}, fileId: {}", benchId, file.getId()));
+                    return filePartFlux.flatMap(filePart -> {
+                        var file = new File();
+                        file.setId(idGenerator.generate());
+                        return storageService.saveFile(benchId, file.getId(), filePart)
+                                .doOnNext(file::setName)
+                                .doOnNext(filename -> bench.getFiles().add(file));
+                    }).then(benchService.save(bench));
+                }).doOnNext(bench -> log.info("File | create - benchId: {}", bench.getId()));
     }
 
     @GetMapping(value = "/{bench_id}/{file_id}", produces = MediaType.IMAGE_JPEG_VALUE)

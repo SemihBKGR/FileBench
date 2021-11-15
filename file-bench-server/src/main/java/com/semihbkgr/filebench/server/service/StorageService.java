@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 public interface StorageService {
 
-    Mono<String> saveFile(String benchId,String fileId,Mono<FilePart> filePartMono);
+    Mono<String> saveFile(String benchId,String fileId,FilePart filePart);
 
     Mono<Void> updateFile(String benchId,String fileId,Mono<FilePart> filePartMono);
 
