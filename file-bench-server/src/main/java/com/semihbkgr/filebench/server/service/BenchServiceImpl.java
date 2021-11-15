@@ -1,7 +1,7 @@
 package com.semihbkgr.filebench.server.service;
 
 import com.semihbkgr.filebench.server.model.Bench;
-import com.semihbkgr.filebench.server.model.dto.BenchInfoDto;
+import com.semihbkgr.filebench.server.model.projection.BenchInfo;
 import com.semihbkgr.filebench.server.repository.BenchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,12 +20,7 @@ public class BenchServiceImpl implements BenchService {
     }
 
     @Override
-    public Mono<Bench> update(String id, Bench bench) {
-        return benchRepository.save(bench.withId(id));
-    }
-
-    @Override
-    public Flux<BenchInfoDto> findAllInfo() {
+    public Flux<BenchInfo> findAll() {
         return benchRepository.findAllBy();
     }
 

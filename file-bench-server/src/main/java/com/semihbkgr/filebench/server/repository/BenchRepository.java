@@ -1,12 +1,12 @@
 package com.semihbkgr.filebench.server.repository;
 
 import com.semihbkgr.filebench.server.model.Bench;
-import com.semihbkgr.filebench.server.model.dto.BenchInfoDto;
+import com.semihbkgr.filebench.server.model.projection.BenchInfo;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 
 public interface BenchRepository extends ReactiveMongoRepository<Bench, String> {
 
-    Flux<BenchInfoDto> findAllBy();
+    Flux<BenchInfo> findAllBy();
 
 }

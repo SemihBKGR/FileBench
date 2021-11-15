@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Document(collection = "bench")
-@With
 @JsonView(Bench.Views.BenchDetails.class)
 public class Bench {
 
@@ -23,8 +22,6 @@ public class Bench {
     private String token;
 
     private String name;
-
-    private String description;
 
     private List<File> files;
 

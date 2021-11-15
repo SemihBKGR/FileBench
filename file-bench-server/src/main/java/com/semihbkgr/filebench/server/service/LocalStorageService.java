@@ -40,7 +40,7 @@ public class LocalStorageService implements StorageService {
     }
 
     @Override
-    public Mono<Void> saveFile(@NonNull String benchId, @NonNull String fileId, @NonNull Mono<FilePart> filePartMono) {
+    public Mono<String> saveFile(@NonNull String benchId, @NonNull String fileId, @NonNull Mono<FilePart> filePartMono) {
         return Mono.<Path>create(voidMonoSink -> {
             try {
                 var directoryPath = resolveBenchPath(benchId);
@@ -53,7 +53,7 @@ public class LocalStorageService implements StorageService {
             } catch (IOException e) {
                 voidMonoSink.error(e);
             }
-        }).flatMap(filePath -> filePartMono.flatMap(filePart -> filePart.transferTo(filePath)));
+        }).flatMap(filePath -> filePartMono.flatMap(filePart -> filePart.transferTo(filePath).thenReturn(filePart.filename())));
     }
 
     @Override

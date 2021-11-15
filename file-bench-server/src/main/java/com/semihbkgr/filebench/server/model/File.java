@@ -17,10 +17,6 @@ public class File {
 
     private String name;
 
-    private String description;
-
-    private String label;
-
     private long size;
 
     private long downloadCount;

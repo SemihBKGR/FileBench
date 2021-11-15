@@ -22,32 +22,6 @@ spring:
 id:
   length: 9
 
-validation:
-  bench:
-    nameRegex: "^[a-zA-Z0-9 ]+$"
-    nameRequired: true
-    nameMinLength: 4
-    nameMaxLength: 24
-    descriptionRegex: "^[a-zA-Z0-9 ]+$"
-    descriptionReqired: false
-    descriptionMinLength: 0
-    descriptionMaxLength: 255
-    expirationMinDuration: 1H
-    expirationMaxDuration: 24H
-  file:
-    nameRegex: "^[a-zA-Z0-9 ]+$"
-    nameRequired: false
-    nameMinLength: 4
-    nameMaxLength: 24
-    descriptionRegex: "^[a-zA-Z0-9 ]+$"
-    descriptionReqired: false
-    descriptionMinLength: 0
-    descriptionMaxLength: 256
-    labelRegex: "^[a-zA-Z0-9_]+$"
-    labelReqired: false
-    labelMinLength: 0
-    labelMaxLength: 128
-
 storage:
   local:
     root-dir: files
