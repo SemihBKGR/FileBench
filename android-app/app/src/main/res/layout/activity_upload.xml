@@ -38,6 +38,8 @@
               android:layout_width="fill_parent"
               android:scrollbars="horizontal"
               android:layout_height="fill_parent"
+              android:verticalSpacing="10dp"
+              android:horizontalSpacing="10dp"
               android:layout_weight="100"/>
 
     <Button android:text="@string/upload"

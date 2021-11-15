@@ -88,28 +88,28 @@ public class UploadActivity extends AppCompatActivity {
         Log.i(TAG, "onActivityResult: resultCode: " + resultCode + ", requestCode: " + requestCode);
         if (requestCode == SELECT_PICTURES) {
             if (resultCode == Activity.RESULT_OK) {
-                List<Uri> uriList = new ArrayList<>();
+                List<Uri> currentUriList = new ArrayList<>();
                 if (resultData.getClipData() != null) {
                     int count = resultData.getClipData().getItemCount();
                     int currentItem = 0;
                     while (currentItem < count) {
                         Uri uri = resultData.getClipData().getItemAt(currentItem).getUri();
-                        uriList.add(uri);
+                        currentUriList.add(uri);
                         currentItem++;
                     }
                 } else if (resultData.getData() != null) {
                     Uri uri = resultData.getData();
-                    uriList.add(uri);
+                    currentUriList.add(uri);
                 }
-                uriSet.addAll(uriList);
                 FileListCreateViewAdapter adapter = (FileListCreateViewAdapter) gridView.getAdapter();
                 if (adapter == null) {
-                    adapter = new FileListCreateViewAdapter(this, new ArrayList<>(uriSet));
+                    adapter = new FileListCreateViewAdapter(this, currentUriList);
                     gridView.setAdapter(adapter);
                 }else{
-                    uriList.removeAll(uriSet);
-                    adapter.addAll(uriList.toArray(new Uri[0]));
+                    currentUriList.removeAll(uriSet);
+                    adapter.addAll(currentUriList);
                 }
+                uriSet.addAll(currentUriList);
             }
         }
     }
