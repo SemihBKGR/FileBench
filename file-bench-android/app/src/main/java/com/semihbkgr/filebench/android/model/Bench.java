@@ -147,4 +147,34 @@ public class Bench implements Parcelable {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Bench bench = (Bench) o;
+
+        if (expirationDurationMs != bench.expirationDurationMs) return false;
+        if (creationTimeMs != bench.creationTimeMs) return false;
+        if (viewCount != bench.viewCount) return false;
+        if (!id.equals(bench.id)) return false;
+        if (!token.equals(bench.token)) return false;
+        if (!name.equals(bench.name)) return false;
+        if (!description.equals(bench.description)) return false;
+        return files.equals(bench.files);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + token.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + files.hashCode();
+        result = 31 * result + (int) (expirationDurationMs ^ (expirationDurationMs >>> 32));
+        result = 31 * result + (int) (creationTimeMs ^ (creationTimeMs >>> 32));
+        result = 31 * result + (int) (viewCount ^ (viewCount >>> 32));
+        return result;
+    }
+
 }

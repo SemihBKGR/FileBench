@@ -1,6 +1,6 @@
 package com.semihbkgr.filebench.android.util;
 
-public class Pair <K,V>{
+public class Pair<K, V> {
 
     protected K key;
     protected V value;
@@ -24,6 +24,14 @@ public class Pair <K,V>{
 
     public void setValue(V value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "Pair{" +
+                "key=" + key +
+                ", value=" + value +
+                '}';
     }
 
 }

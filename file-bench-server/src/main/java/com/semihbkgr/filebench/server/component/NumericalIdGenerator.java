@@ -4,9 +4,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Timer;
-
-
 @Component
 public class NumericalIdGenerator implements IdGenerator<String> {
 

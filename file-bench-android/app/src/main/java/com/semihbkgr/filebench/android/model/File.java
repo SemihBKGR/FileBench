@@ -5,6 +5,17 @@ import android.os.Parcelable;
 
 public class File implements Parcelable {
 
+    public static final Creator<File> CREATOR = new Creator<File>() {
+        @Override
+        public File createFromParcel(Parcel in) {
+            return new File(in);
+        }
+
+        @Override
+        public File[] newArray(int size) {
+            return new File[size];
+        }
+    };
     private String id;
     private String name;
     private String description;
@@ -32,18 +43,6 @@ public class File implements Parcelable {
         size = in.readLong();
         downloadCount = in.readLong();
     }
-
-    public static final Creator<File> CREATOR = new Creator<File>() {
-        @Override
-        public File createFromParcel(Parcel in) {
-            return new File(in);
-        }
-
-        @Override
-        public File[] newArray(int size) {
-            return new File[size];
-        }
-    };
 
     public String getId() {
         return id;
@@ -106,6 +105,45 @@ public class File implements Parcelable {
         dest.writeString(label);
         dest.writeLong(size);
         dest.writeLong(downloadCount);
+    }
+
+    @Override
+    public String toString() {
+        return "File{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", label='" + label + '\'' +
+                ", size=" + size +
+                ", downloadCount=" + downloadCount +
+                '}';
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        File file = (File) o;
+
+        if (size != file.size) return false;
+        if (downloadCount != file.downloadCount) return false;
+        if (!id.equals(file.id)) return false;
+        if (!name.equals(file.name)) return false;
+        if (!description.equals(file.description)) return false;
+        return label.equals(file.label);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + label.hashCode();
+        result = 31 * result + (int) (size ^ (size >>> 32));
+        result = 31 * result + (int) (downloadCount ^ (downloadCount >>> 32));
+        return result;
     }
 
 }
