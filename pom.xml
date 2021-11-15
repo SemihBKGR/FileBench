@@ -12,8 +12,6 @@
     <groupId>com.semihbkgr.filebench</groupId>
     <artifactId>server</artifactId>
     <version>1.0.0</version>
-    <name>FileBenchServer</name>
-    <description>Server project of FileBench</description>
 
     <properties>
         <java.version>11</java.version>
