@@ -19,7 +19,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.semihbkgr.filebench.android.AppContext;
 import com.semihbkgr.filebench.android.R;
 import com.semihbkgr.filebench.android.model.Bench;
+import com.semihbkgr.filebench.android.net.ClientCallback;
+import com.semihbkgr.filebench.android.net.ErrorModel;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 public class UploadActivity extends AppCompatActivity {
@@ -27,6 +33,7 @@ public class UploadActivity extends AppCompatActivity {
     private static final int SELECT_PICTURES = 1;
     private static final String TAG = UploadActivity.class.getName();
 
+    private TextView idTextView;
     private TextView nameTextView;
     private TextView creationTimeTextView;
     private TextView expirationTimeTextView;
@@ -45,6 +52,7 @@ public class UploadActivity extends AppCompatActivity {
         Log.i(TAG, "onCreate");
 
         //find components
+        idTextView = findViewById(R.id.idTextView);
         nameTextView = findViewById(R.id.nameTextView);
         creationTimeTextView = findViewById(R.id.creationTimeTextView);
         expirationTimeTextView = findViewById(R.id.expirationTimeTextView);
@@ -58,7 +66,8 @@ public class UploadActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CreateActivity.class);
             startActivity(intent);
         }
-        nameTextView.setText(bench.getName());
+        idTextView.setText(bench.getId());
+        nameTextView.setText(bench.getName() != null && !bench.getName().isEmpty() ? bench.getName() : "<empty>");
         creationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs())));
         expirationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs() + bench.getExpirationDurationMs())));
 
@@ -80,6 +89,39 @@ public class UploadActivity extends AppCompatActivity {
 
     private void onUploadButtonClick(View v) {
         Log.i(TAG, "onUploadButtonClick: button clicked");
+        uriSet.stream().forEach(file -> {
+            try (BufferedInputStream bis = new BufferedInputStream(getContentResolver().openInputStream(file))) {
+                ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+                byte[] buffer = new byte[2048];
+                int i;
+                while ((i = bis.read(buffer)) != -1) {
+                    byteBuffer.write(buffer, 0, i);
+                }
+                AppContext.instance.benchClient.uploadFile(bench.getId(), bench.getToken(), file.getLastPathSegment(), byteBuffer.toByteArray(), new ClientCallback<Bench>() {
+                    @Override
+                    public void success(Bench data) {
+                        Log.i(TAG, "success: uploaded successfully");
+                        runOnUiThread(() -> Toast.makeText(UploadActivity.this, "successful", Toast.LENGTH_SHORT).show());
+                    }
+
+                    @Override
+                    public void error(ErrorModel errorModel) {
+                        Log.w(TAG, "error: error while uploading");
+                        runOnUiThread(() -> Toast.makeText(UploadActivity.this, errorModel.getMessage(), Toast.LENGTH_SHORT).show());
+                    }
+
+                    @Override
+                    public void fail(Throwable t) {
+                        Log.e(TAG, "fail: fail while uploading", t);
+                        runOnUiThread(() -> Toast.makeText(UploadActivity.this, "fail while uploading", Toast.LENGTH_SHORT).show());
+                    }
+                });
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -105,7 +147,7 @@ public class UploadActivity extends AppCompatActivity {
                 if (adapter == null) {
                     adapter = new FileListCreateViewAdapter(this, currentUriList);
                     gridView.setAdapter(adapter);
-                }else{
+                } else {
                     currentUriList.removeAll(uriSet);
                     adapter.addAll(currentUriList);
                 }

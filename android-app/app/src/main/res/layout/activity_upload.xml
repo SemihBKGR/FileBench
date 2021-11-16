@@ -9,6 +9,12 @@
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:id="@+id/idTextView"
+              android:textColor="@color/black"
+              android:textSize="24sp"/>
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:id="@+id/nameTextView"
               android:textColor="@color/black"
               android:textSize="24sp"/>
@@ -39,7 +45,6 @@
               android:scrollbars="horizontal"
               android:layout_height="fill_parent"
               android:verticalSpacing="10dp"
-              android:horizontalSpacing="10dp"
               android:layout_weight="100"/>
 
     <Button android:text="@string/upload"

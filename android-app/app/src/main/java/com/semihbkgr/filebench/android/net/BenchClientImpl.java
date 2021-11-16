@@ -33,8 +33,12 @@ public class BenchClientImpl implements BenchClient {
     }
 
     @Override
-    public void uploadFile() {
-
+    public void uploadFile(String benchId, String token, String name, byte[] content, ClientCallback<? super Bench> callback) {
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        builder.addFormDataPart("file", name, RequestBody.create(MediaType.parse("application/octet-stream"), content));
+        RequestBody body = builder.build();
+        Request request = new Request.Builder().url(url + "/bench/" + benchId + "?token=" + token).post(body).build();
+        enqueueRequest(request, callback);
     }
 
     @Override

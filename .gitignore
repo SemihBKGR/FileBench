@@ -32,9 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
-# Docker Volumes
-volumes/mongo/db/*
-
 # Storeage
 files
 logs
