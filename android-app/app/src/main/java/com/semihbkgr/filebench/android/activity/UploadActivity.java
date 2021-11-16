@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +23,9 @@ import com.semihbkgr.filebench.android.model.Bench;
 import com.semihbkgr.filebench.android.net.ClientCallback;
 import com.semihbkgr.filebench.android.net.ErrorModel;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UploadActivity extends AppCompatActivity {
 
@@ -49,8 +48,6 @@ public class UploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
-        Log.i(TAG, "onCreate");
-
         //find components
         idTextView = findViewById(R.id.idTextView);
         nameTextView = findViewById(R.id.nameTextView);
@@ -68,8 +65,8 @@ public class UploadActivity extends AppCompatActivity {
         }
         idTextView.setText(bench.getId());
         nameTextView.setText(bench.getName() != null && !bench.getName().isEmpty() ? bench.getName() : "<empty>");
-        creationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs())));
-        expirationTimeTextView.setText(AppContext.instance.dateFormat.format(new Date(bench.getCreationTimeMs() + bench.getExpirationDurationMs())));
+        creationTimeTextView.setText(AppContext.INSTANCE.dateFormat.format(new Date(bench.getCreationTimeMs())));
+        expirationTimeTextView.setText(AppContext.INSTANCE.dateFormat.format(new Date(bench.getCreationTimeMs() + bench.getExpirationDurationMs())));
 
         this.uriSet = new HashSet<>();
 
@@ -89,38 +86,51 @@ public class UploadActivity extends AppCompatActivity {
 
     private void onUploadButtonClick(View v) {
         Log.i(TAG, "onUploadButtonClick: button clicked");
-        uriSet.stream().forEach(file -> {
-            try (BufferedInputStream bis = new BufferedInputStream(getContentResolver().openInputStream(file))) {
-                ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-                byte[] buffer = new byte[2048];
-                int i;
-                while ((i = bis.read(buffer)) != -1) {
-                    byteBuffer.write(buffer, 0, i);
+        AppContext.INSTANCE.handler.post(() -> {
+            List<Pair<String, byte[]>> fileNameContentList = uriSet.parallelStream()
+                    .map(uri -> {
+                        String name = uri.getLastPathSegment();
+                        byte[] content = null;
+                        try (InputStream is = getContentResolver().openInputStream(uri);
+                             BufferedInputStream bis = new BufferedInputStream(is)) {
+                            ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+                            byte[] buffer = new byte[2048];
+                            int i;
+                            while ((i = bis.read(buffer)) != -1) {
+                                byteBuffer.write(buffer, 0, i);
+                            }
+                            content = byteBuffer.toByteArray();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (content == null)
+                            return null;
+                        return new Pair<>(name, content);
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            AppContext.INSTANCE.benchClient.uploadFiles(bench.getId(), bench.getToken(), fileNameContentList, new ClientCallback<Bench>() {
+                @Override
+                public void success(Bench data) {
+                    Log.i(TAG, "success: uploaded successfully");
+                    runOnUiThread(() -> Toast.makeText(UploadActivity.this, "successful", Toast.LENGTH_SHORT).show());
                 }
-                AppContext.instance.benchClient.uploadFile(bench.getId(), bench.getToken(), file.getLastPathSegment(), byteBuffer.toByteArray(), new ClientCallback<Bench>() {
-                    @Override
-                    public void success(Bench data) {
-                        Log.i(TAG, "success: uploaded successfully");
-                        runOnUiThread(() -> Toast.makeText(UploadActivity.this, "successful", Toast.LENGTH_SHORT).show());
-                    }
 
-                    @Override
-                    public void error(ErrorModel errorModel) {
-                        Log.w(TAG, "error: error while uploading");
-                        runOnUiThread(() -> Toast.makeText(UploadActivity.this, errorModel.getMessage(), Toast.LENGTH_SHORT).show());
-                    }
+                @Override
+                public void error(ErrorModel errorModel) {
+                    Log.w(TAG, "error: error while uploading");
+                    runOnUiThread(() -> Toast.makeText(UploadActivity.this, errorModel.getMessage(), Toast.LENGTH_SHORT).show());
+                }
 
-                    @Override
-                    public void fail(Throwable t) {
-                        Log.e(TAG, "fail: fail while uploading", t);
-                        runOnUiThread(() -> Toast.makeText(UploadActivity.this, "fail while uploading", Toast.LENGTH_SHORT).show());
-                    }
-                });
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                @Override
+                public void fail(Throwable t) {
+                    Log.e(TAG, "fail: fail while uploading", t);
+                    runOnUiThread(() -> Toast.makeText(UploadActivity.this, "fail while uploading", Toast.LENGTH_SHORT).show());
+                }
+            });
         });
     }
 
@@ -159,7 +169,7 @@ public class UploadActivity extends AppCompatActivity {
     private static class FileListCreateViewAdapter extends ArrayAdapter<Uri> {
 
         public FileListCreateViewAdapter(@NonNull Context context, @NonNull List<Uri> objects) {
-            super(context, R.layout.one_line_file_create, objects);
+            super(context, R.layout.item_file, objects);
         }
 
         @NonNull
@@ -167,7 +177,7 @@ public class UploadActivity extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
             Uri uri = getItem(position);
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.one_line_file_create, parent, false);
+            convertView = inflater.inflate(R.layout.item_file, parent, false);
             ImageView imageView = convertView.findViewById(R.id.imageView);
             imageView.setImageURI(uri);
             imageView.setOnLongClickListener(v -> {

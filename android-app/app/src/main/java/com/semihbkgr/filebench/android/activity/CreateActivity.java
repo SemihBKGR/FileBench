@@ -48,7 +48,7 @@ public class CreateActivity extends AppCompatActivity {
         Bench bench = new Bench();
         bench.setName(name);
         bench.setExpirationDurationMs(duration.getMillis());
-        AppContext.instance.benchClient.createBench(bench, new ClientCallback<Bench>() {
+        AppContext.INSTANCE.benchClient.createBench(bench, new ClientCallback<Bench>() {
             @Override
             public void success(Bench data) {
                 Log.i(TAG, "success: bench has been created successfully");

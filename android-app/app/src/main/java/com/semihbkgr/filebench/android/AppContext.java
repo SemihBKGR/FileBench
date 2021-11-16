@@ -1,5 +1,7 @@
 package com.semihbkgr.filebench.android;
 
+import android.os.Handler;
+import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.semihbkgr.filebench.android.net.BenchClient;
@@ -12,23 +14,30 @@ import java.util.Locale;
 
 public class AppContext {
 
-    public static AppContext instance;
+    private static final String TAG = AppContext.class.getName();
+
+    public static AppContext INSTANCE;
 
     public final Gson gson;
     public final OkHttpClient httpClient;
     public final BenchClient benchClient;
     public final DateFormat dateFormat;
+    public final Handler handler;
 
     private AppContext() {
         this.gson = new GsonBuilder().create();
         this.httpClient = new OkHttpClient.Builder().build();
         this.benchClient = new BenchClientImpl(Constants.SERVER_URL, httpClient, gson);
         this.dateFormat = new SimpleDateFormat("HH:mm:ss MM/dd/yyyy", Locale.getDefault());
+        this.handler=new Handler();
     }
 
     public static void initialize() {
-        if (instance == null)
-            instance = new AppContext();
+        if (INSTANCE == null) {
+            INSTANCE = new AppContext();
+            Log.i(TAG, "initialize: AppContext instance has been initialized successfully");
+        } else
+            Log.w(TAG, "initialize: AppContext instance has already been initialized");
     }
 
     public static class Constants {

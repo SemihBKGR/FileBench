@@ -21,6 +21,7 @@ public class File implements Parcelable {
     private long size;
     private long downloadCount;
 
+
     public File() {
     }
 

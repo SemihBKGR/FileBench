@@ -54,7 +54,7 @@ public class MenuActivity extends AppCompatActivity {
         String benchId = benchIdEditText.getEditableText().toString();
         if (benchId.length() == AppContext.Constants.BENCH_ID_LENGTH) {
             loadingDialog.startLoading();
-            AppContext.instance.benchClient.getBench(benchId, new ClientCallback<Bench>() {
+            AppContext.INSTANCE.benchClient.getBench(benchId, new ClientCallback<Bench>() {
                 @Override
                 public void success(Bench data) {
                     runOnUiThread(() -> {

@@ -7,97 +7,38 @@
         tools:context=".activity.BenchActivity"
         android:orientation="vertical">
 
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/idTextView"
+              android:textColor="@color/black"
+              android:textSize="24sp"/>
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp">
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/nameTextView"
+              android:textColor="@color/black"
+              android:textSize="24sp"/>
 
-        <TextView
-                android:id="@+id/benchNameTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="35sp"
-                android:textColor="@color/black"/>
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/creationTimeTextView"
+              android:textColor="@color/black"
+              android:textSize="24sp"/>
 
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/expirationTimeTextView"
+              android:textColor="@color/black"
+              android:textSize="24sp"/>
 
-            <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/clock_green"/>
-
-            <TextView
-                    android:id="@+id/benchCreationTimeTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@color/black"
-                    android:textSize="23sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-            <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/clock_red"/>
-
-            <TextView
-                    android:id="@+id/benchExpirationTimeTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@color/black"
-                    android:textSize="23sp"/>
-
-        </LinearLayout>
-
-
-
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-            <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/view"/>
-
-            <TextView
-                    android:id="@+id/benchViewCountTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@color/black"
-                    android:textSize="23sp"/>
-
-        </LinearLayout>
-
-
-        <TextView
-                android:id="@+id/benchDescriptionTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="21sp"/>
-
-    </LinearLayout>
-
-    <ListView
-            android:id="@+id/fileListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    <GridView android:id="@+id/imageGrid"
+              android:numColumns="3"
+              android:gravity="center"
+              android:columnWidth="70dp"
+              android:stretchMode="columnWidth"
+              android:layout_width="fill_parent"
+              android:scrollbars="horizontal"
+              android:layout_height="fill_parent"
+              android:verticalSpacing="10dp"/>
 
 </LinearLayout>
