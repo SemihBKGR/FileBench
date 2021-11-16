@@ -22,7 +22,7 @@ spring:
     type: hazelcast
 
 id:
-  length: 9
+  length: 7
 
 storage:
   local:

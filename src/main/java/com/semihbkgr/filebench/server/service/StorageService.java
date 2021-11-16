@@ -7,14 +7,12 @@ import reactor.core.publisher.Mono;
 
 public interface StorageService {
 
-    Mono<String> saveFile(String benchId,String fileId,FilePart filePart);
+    Mono<String> saveFile(String benchId, String fileId, FilePart filePart);
 
-    Mono<Void> updateFile(String benchId,String fileId,Mono<FilePart> filePartMono);
-
-    Flux<DataBuffer> getFile(String benchId,String fileId);
+    Flux<DataBuffer> getFile(String benchId, String fileId);
 
     Mono<Void> deleteBench(String benchId);
 
-    Mono<Void> deleteFile(String benchId,String fileId);
+    Mono<Void> deleteFile(String benchId, String fileId);
 
 }

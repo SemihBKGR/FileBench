@@ -7,11 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class NumericalIdGenerator implements IdGenerator<String> {
 
-    @Value("${id.length:9}")
+    @Value("${id.length:7}")
     public int idLength;
 
     @Override
     public String generate() {
+
         return RandomStringUtils.randomNumeric(idLength);
     }
 

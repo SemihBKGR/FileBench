@@ -57,11 +57,6 @@ public class LocalStorageService implements StorageService {
     }
 
     @Override
-    public Mono<Void> updateFile(String benchId, String fileId, Mono<FilePart> filePartMono) {
-        return filePartMono.flatMap(filePart -> filePart.transferTo(resolveFilePath(benchId, fileId)));
-    }
-
-    @Override
     public Flux<DataBuffer> getFile(@NonNull String benchId, @NonNull String fileId) {
         return DataBufferUtils.read(resolveFilePath(benchId, fileId), new DefaultDataBufferFactory(), StreamUtils.BUFFER_SIZE);
     }
