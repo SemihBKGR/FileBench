@@ -1,3 +1,3 @@
-# file-bench
+# File Bench
 
-It is file sharing android app
+It is file storage and sharing server application

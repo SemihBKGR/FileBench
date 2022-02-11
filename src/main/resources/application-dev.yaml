@@ -35,9 +35,6 @@ bench:
 file:
   size-max-byte: 1.048.576
 
-hazecast:
-  instance: hc-instnace
-
 logging:
   level:
     root: info

@@ -1,4 +1,4 @@
-package com.semihbkgr.filebench.server.api;
+package com.semihbkgr.filebench.server.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.semihbkgr.filebench.server.component.NumericalIdGenerator;
@@ -26,7 +26,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping("/bench")
 @RequiredArgsConstructor
-public class BenchApi {
+public class BenchController {
 
     private final BenchService benchService;
     private final NumericalIdGenerator idGenerator;
