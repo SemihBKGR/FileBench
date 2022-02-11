@@ -15,8 +15,11 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 @Service
 @Slf4j
@@ -29,68 +32,80 @@ public class LocalStorageService implements StorageService {
     }
 
     @PostConstruct
-    public void createRootDirIfNotExists() throws IOException {
+    public void createOrClearRootDir() throws IOException {
         if (!Files.exists(rootDirPath)) {
             log.info("RootDir does not exists");
             Files.createDirectory(rootDirPath);
             log.info("RootDir has been created successfully");
-        } else
+        } else {
             log.info("RootDir is already available");
+            Files.walkFileTree(rootDirPath, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    if (!dir.equals(rootDirPath)) {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+                    return FileVisitResult.TERMINATE;
+                }
+            });
+            log.info("RootDir is cleared");
+        }
         log.info("RootDir path: {}", rootDirPath);
     }
 
     @Override
-    public Mono<String> saveFile(@NonNull String benchId, @NonNull String fileId, @NonNull FilePart filePart) {
-        return Mono.<Path>create(voidMonoSink -> {
-            try {
-                var directoryPath = resolveBenchPath(benchId);
-                if (!Files.exists(directoryPath))
-                    Files.createDirectory(directoryPath);
-                var filePath = resolveFilePath(benchId, fileId);
-                if (!Files.exists(filePath))
-                    Files.createFile(filePath);
-                voidMonoSink.success(filePath);
-            } catch (IOException e) {
-                voidMonoSink.error(e);
-            }
-        }).flatMap(filePath -> filePart.transferTo(filePath).thenReturn(filePart.filename()));
+    public Mono<Void> saveFile(@NonNull String dirname, @NonNull String filename, @NonNull FilePart filePart) {
+        return filePart.transferTo(resolveFilePath(dirname, filename));
     }
 
     @Override
-    public Flux<DataBuffer> getFile(@NonNull String benchId, @NonNull String fileId) {
-        return DataBufferUtils.read(resolveFilePath(benchId, fileId), new DefaultDataBufferFactory(), StreamUtils.BUFFER_SIZE);
+    public Flux<DataBuffer> getFile(@NonNull String dirname, @NonNull String filename) {
+        return DataBufferUtils.read(resolveFilePath(dirname, filename), new DefaultDataBufferFactory(), StreamUtils.BUFFER_SIZE);
     }
 
     @Override
-    public Mono<Void> deleteBench(@NonNull String benchId) {
+    public Mono<Void> deleteFile(@NonNull String dirname, @NonNull String filename) {
         return Mono.create(voidMonoSink -> {
-            try {
-                FileSystemUtils.deleteRecursively(resolveBenchPath(benchId));
-            } catch (IOException e) {
-                log.error(e.getMessage());
-            }
-            voidMonoSink.success();
+            var path = resolveFilePath(dirname, filename);
+            if (Files.exists(path))
+                try {
+                    Files.delete(path);
+                    voidMonoSink.success();
+                } catch (IOException e) {
+                    voidMonoSink.error(e);
+                }
+            else
+                voidMonoSink.error(new IllegalArgumentException("No such file, dirname: " + dirname + ", filename: " + filename));
         });
     }
 
     @Override
-    public Mono<Void> deleteFile(@NonNull String benchId, @NonNull String fileId) {
+    public Mono<Void> deleteBench(@NonNull String dirname) {
         return Mono.create(voidMonoSink -> {
             try {
-                Files.delete(resolveFilePath(benchId, fileId));
+                if (FileSystemUtils.deleteRecursively(resolveBenchPath(dirname)))
+                    voidMonoSink.success();
+                else
+                    voidMonoSink.error(new IllegalArgumentException("No such bench, dirname: " + dirname));
             } catch (IOException e) {
                 voidMonoSink.error(e);
             }
-            voidMonoSink.success();
         });
     }
 
-    private Path resolveBenchPath(@NonNull String benchId) {
-        return rootDirPath.resolve(benchId);
+    private Path resolveBenchPath(@NonNull String dirname) {
+        return rootDirPath.resolve(dirname);
     }
 
-    private Path resolveFilePath(@NonNull String benchId, @NonNull String fileId) {
-        return rootDirPath.resolve(benchId).resolve(fileId);
+    private Path resolveFilePath(@NonNull String dirname, @NonNull String filename) {
+        return rootDirPath.resolve(dirname).resolve(filename);
     }
 
 }
