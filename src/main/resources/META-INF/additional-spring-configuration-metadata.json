@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "spring.r2dbc.sql.schema",
+      "type": "java.lang.String",
+      "description": "Path of schema SQL file which will be executed on startup."
+    }
+  ]
+}

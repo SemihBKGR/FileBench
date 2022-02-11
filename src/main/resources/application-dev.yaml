@@ -11,8 +11,9 @@ spring:
   r2dbc:
     username: user
     password: password
-    url: r2dbc:mysql://localhost:3306/filebench
-
+    url: r2dbc:mysql://localhost:3306/filebench?tlsVersion=TLSv1.2
+    sql:
+      schema: sql/schema.sql
 id:
   length: 7
 

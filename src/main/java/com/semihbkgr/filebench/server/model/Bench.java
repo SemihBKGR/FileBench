@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.List;
@@ -14,24 +16,32 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table("bench")
+@Table("benches")
 @JsonView(Bench.Views.BenchDetails.class)
 public class Bench {
 
     @Id
-    private String id;
+    private Integer id;
 
+    @Column("access_token")
+    private String accessToken;
+
+    @Column("edit_token")
     @JsonView(Bench.Views.BenchSecrets.class)
-    private String token;
+    private String editToken;
 
     private String name;
 
+    @Transient
     private List<File> files;
 
-    private long expirationDurationMs;
+    @Column("expiration_duration")
+    private long expirationDuration;
 
-    private long creationTimeMs;
+    @Column("creation_time")
+    private long creationTime;
 
+    @Column("view_count")
     private long viewCount;
 
     public static class Views {

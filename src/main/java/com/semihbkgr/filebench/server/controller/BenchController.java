@@ -6,7 +6,6 @@ import com.semihbkgr.filebench.server.model.Bench;
 import com.semihbkgr.filebench.server.model.File;
 import com.semihbkgr.filebench.server.service.BenchService;
 import com.semihbkgr.filebench.server.service.StorageService;
-import com.semihbkgr.filebench.server.track.TrackService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -31,7 +30,6 @@ public class BenchController {
     private final BenchService benchService;
     private final NumericalIdGenerator idGenerator;
     private final StorageService storageService;
-    private final TrackService trackService;
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -43,7 +41,6 @@ public class BenchController {
         return benchService.save(bench)
                 .doOnNext(savedBench -> {
                     log.info("Bench | create - id: {}", bench.getId());
-                    trackService.created(1);
                 });
     }
 
