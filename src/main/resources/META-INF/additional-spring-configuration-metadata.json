@@ -4,6 +4,11 @@
       "name": "spring.r2dbc.sql.schema",
       "type": "java.lang.String",
       "description": "Path of schema SQL file which will be executed on startup."
+    },
+    {
+      "name": "token.length",
+      "type": "java.lang.String",
+      "description": "Length of bench token."
     }
   ]
 }

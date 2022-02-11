@@ -14,8 +14,9 @@ spring:
     url: r2dbc:mysql://localhost:3306/filebench?tlsVersion=TLSv1.2
     sql:
       schema: sql/schema.sql
-id:
-  length: 7
+
+token:
+  length: 9
 
 storage:
   local:
@@ -27,6 +28,7 @@ bench:
 
 file:
   size-max-byte: 1.048.576
+
 
 logging:
   level:

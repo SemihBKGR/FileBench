@@ -1,6 +1,3 @@
-DROP TABLE IF EXISTS `benches`;
-DROP TABLE IF EXISTS `files`;
-
 CREATE TABLE IF NOT EXISTS `benches`
 (
     `id`                  INT AUTO_INCREMENT PRIMARY KEY,

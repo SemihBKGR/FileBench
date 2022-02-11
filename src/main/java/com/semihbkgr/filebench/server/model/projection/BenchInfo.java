@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BenchInfo {
 
-    private String id;
-    private long expirationDurationMs;
-    private long creationTimeMs;
+    private int id;
+    private long expirationDuration;
+    private long creationTime;
 
 }

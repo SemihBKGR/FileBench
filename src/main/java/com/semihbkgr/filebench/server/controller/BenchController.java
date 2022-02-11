@@ -1,25 +1,11 @@
 package com.semihbkgr.filebench.server.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.semihbkgr.filebench.server.component.NumericalIdGenerator;
-import com.semihbkgr.filebench.server.model.Bench;
-import com.semihbkgr.filebench.server.model.File;
 import com.semihbkgr.filebench.server.service.BenchService;
 import com.semihbkgr.filebench.server.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j(topic = "bench")
 @RestController
@@ -28,9 +14,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class BenchController {
 
     private final BenchService benchService;
-    private final NumericalIdGenerator idGenerator;
     private final StorageService storageService;
 
+    /*
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @JsonView(Bench.Views.BenchSecrets.class)
@@ -42,6 +28,8 @@ public class BenchController {
                 .doOnNext(savedBench -> {
                     log.info("Bench | create - id: {}", bench.getId());
                 });
+
+
     }
 
     @GetMapping("/{id}")
@@ -144,5 +132,6 @@ public class BenchController {
                 })
                 .doOnNext(file -> log.info("File | delete - benchId: {}, fileId: {}", benchId, file.getId()));
     }
+    */
 
 }
