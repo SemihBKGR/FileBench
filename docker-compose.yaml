@@ -14,6 +14,21 @@ services:
       - "3306:3306"
     networks:
       - file-bench-server
+  filebench:
+    build: .
+    container_name: file-bench-server
+    hostname: filebench
+    environment:
+      SERVER_PORT: 9000
+      DATABASE_USERNAME: 'user'
+      DATABASE_PASSWORD: 'password'
+      DATABASE_HOSTNAME: 'database'
+      DATABASE_PORT: 3306
+      DATABASE_SCHEMA: 'filebench'
+    ports:
+      - "9000:9000"
+    networks:
+      - file-bench-server
 
 networks:
   file-bench-server:

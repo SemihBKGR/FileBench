@@ -1,6 +1,8 @@
-FROM openjdk:11.0.7-jre-slim
-ENV PORT=9000
-EXPOSE ${PORT}
-ARG JAR_FILE=target/file-bench-server.jar
-ADD ${JAR_FILE} app.jar
+FROM maven:3.8.4-openjdk-11-slim AS build
+COPY src /filebench/src
+COPY pom.xml /filebench
+RUN mvn -f /filebench/pom.xml -q clean package
+FROM openjdk:11-slim
+COPY --from=build /filebench/target/file-bench-server-1.0.0.jar app.jar
+EXPOSE 9000
 ENTRYPOINT ["java","-jar","app.jar"]

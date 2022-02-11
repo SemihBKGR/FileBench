@@ -1,0 +1,38 @@
+server:
+  port: ${SERVER_PORT}
+  address: 0.0.0.0
+  error:
+    whitelabel:
+      enabled: false
+    include-exception: true
+    include-message: always
+
+spring:
+  r2dbc:
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    url: r2dbc:mysql://${DATABASE_HOSTNAME}:${DATABASE_PORT}/${DATABASE_SCHEMA}?tlsVersion=TLSv1.2
+    sql:
+      schema: sql/schema.sql
+
+token:
+  length: 9
+
+storage:
+  local:
+    root-dir: files
+
+bench:
+  manager:
+    expiration-check-time-ms: 1000
+
+file:
+  size-max-byte: 1.048.576
+
+logging:
+  level:
+    root: error
+    com:
+      semihbkgr:
+        filebench:
+          server: warn
