@@ -2,20 +2,19 @@ version: '3.9'
 
 services:
   database:
-    image: 'mongo:latest'
-    container_name: 'bs-mongo'
-    restart: always
+    image: mysql:5.7
+    container_name: file-bench-database
+    hostname: mysql
     environment:
-      - MONGO_INITDB_DATABASE=filebench
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=password
-    volumes:
-      - ./volumes/mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      MYSQL_DATABASE: 'filebench'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
     ports:
-      - '27017:27017'
+      - "3306:3306"
     networks:
-      - file-bench-server-network
+      - file-bench-server
 
 networks:
-  file-bench-server-network:
+  file-bench-server:
     driver: bridge

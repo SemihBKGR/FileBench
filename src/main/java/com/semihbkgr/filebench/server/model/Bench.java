@@ -1,9 +1,12 @@
 package com.semihbkgr.filebench.server.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.List;
 
@@ -11,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document(collection = "bench")
+@Table("bench")
 @JsonView(Bench.Views.BenchDetails.class)
 public class Bench {
 
@@ -30,7 +33,6 @@ public class Bench {
     private long creationTimeMs;
 
     private long viewCount;
-
 
     public static class Views {
 
