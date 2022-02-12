@@ -15,4 +15,6 @@ public interface StorageService {
 
     Mono<Void> deleteBench(String dirname);
 
+    Mono<Long> size();
+
 }

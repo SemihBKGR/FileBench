@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @Slf4j
@@ -21,7 +22,9 @@ public class BenchScheduler {
         benchRepository.findAllExpiredBenchInfos()
                 .flatMap(info ->
                         storageService.deleteBench(info.getDirname())
-                                .then(benchRepository.deleteById(info.getId())))
+                                .onErrorResume(e -> Mono.empty())
+                                .then(benchRepository.deleteById(info.getId()))
+                                .onErrorResume(e -> Mono.empty()))
                 .count()
                 .subscribeOn(Schedulers.boundedElastic())
                 .subscribe(count -> {

@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.NoSuchFileException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -79,7 +80,11 @@ public class BenchController {
                                  @RequestPart("content") Mono<FilePart> filePartMono, @RequestHeader("content-length") long contentLength) {
         if (contentLength > benchProperties.getFile().getMaxSize())
             return Mono.error(new IllegalArgumentException("A file size can be max " + benchProperties.getFile().getMaxSize() + " bytes"));
-        return filePartMono.flatMap(filePart -> {
+        return storageService.size().flatMap(size -> {
+            if (size >= benchProperties.getMaxSize())
+                return Mono.error(new IllegalStateException("Storage size is fullly consumed"));
+            return filePartMono;
+        }).flatMap(filePart -> {
             var file = new File();
             file.setName(name);
             file.setDescription(description);
@@ -96,6 +101,7 @@ public class BenchController {
                                     .thenReturn(benchFileTuple.getT2()))
                     .onErrorMap(NoSuchElementException.class, e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()))
                     .onErrorMap(IllegalArgumentException.class, e -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage()))
+                    .onErrorMap(FileAlreadyExistsException.class, e -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()))
                     .onErrorMap(IOException.class, e -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
         });
     }

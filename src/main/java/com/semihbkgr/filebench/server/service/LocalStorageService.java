@@ -107,6 +107,17 @@ public class LocalStorageService implements StorageService {
         });
     }
 
+    @Override
+    public Mono<Long> size() {
+        return Mono.create(sink -> {
+            try {
+                sink.success(Files.size(rootDirPath));
+            } catch (IOException e) {
+                sink.error(e);
+            }
+        });
+    }
+
     private Path resolveBenchPath(@NonNull String dirname) {
         return rootDirPath.resolve(dirname);
     }

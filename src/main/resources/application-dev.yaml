@@ -7,6 +7,12 @@ server:
     include-exception: true
     include-message: always
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
 spring:
   r2dbc:
     username: user
@@ -23,6 +29,7 @@ storage:
     root-dir: files
 
 bench:
+  max-size: 50000000
   max-file-count: 5
   max-file-size: 5000000
   min-expiration-duration: 1000000
