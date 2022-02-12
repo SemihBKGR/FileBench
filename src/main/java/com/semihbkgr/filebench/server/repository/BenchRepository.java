@@ -8,9 +8,7 @@ import reactor.core.publisher.Mono;
 
 public interface BenchRepository extends R2dbcRepository<Bench, Integer> {
 
-    Mono<Bench> findByAccessToken(String accessToken);
-
-    Mono<Bench> findByEditToken(String editToken);
+    Mono<Bench> findById(int id);
 
     Flux<BenchInfo> findAllBy();
 

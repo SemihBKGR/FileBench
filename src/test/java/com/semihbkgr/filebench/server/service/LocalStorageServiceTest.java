@@ -51,8 +51,8 @@ class LocalStorageServiceTest {
     }
 
     @Test
-    @DisplayName("Save mocked FilePart")
-    void saveFile() {
+    @DisplayName("Save file in existing dir")
+    void saveFileInExistingDir() {
         var mockedFilePart = Mockito.mock(FilePart.class);
         Mockito.when(mockedFilePart.filename()).thenReturn("testfile");
         Mockito.when(mockedFilePart.transferTo((Path) ArgumentMatchers.any())).thenReturn(Mono.empty());
@@ -62,10 +62,10 @@ class LocalStorageServiceTest {
     }
 
     @Test
-    @DisplayName("Get file does not exist")
+    @DisplayName("Get existing file")
     void getExistingFile() {
         var mono = storageService.getFile(DIR_NAME, FILE_NAME).log();
-        StepVerifier.create(mono).verifyComplete();
+        StepVerifier.create(mono).expectNextCount(1).verifyComplete();
     }
 
     @Test

@@ -1,11 +1,28 @@
 package com.semihbkgr.filebench.server.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.semihbkgr.filebench.server.model.Bench;
+import com.semihbkgr.filebench.server.model.File;
 import com.semihbkgr.filebench.server.service.BenchService;
 import com.semihbkgr.filebench.server.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j(topic = "bench")
 @RestController
@@ -16,122 +33,95 @@ public class BenchController {
     private final BenchService benchService;
     private final StorageService storageService;
 
-    /*
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @JsonView(Bench.Views.BenchSecrets.class)
     public Mono<Bench> createBench(@RequestBody Bench bench) {
-        bench.setId(idGenerator.generate());
-        bench.setToken(idGenerator.generate());
-        bench.setCreationTimeMs(System.currentTimeMillis());
-        return benchService.save(bench)
-                .doOnNext(savedBench -> {
-                    log.info("Bench | create - id: {}", bench.getId());
-                });
-
-
+        return benchService.saveBench(bench);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{bench_id}")
     @ResponseStatus(HttpStatus.OK)
     @JsonView(Bench.Views.BenchDetails.class)
-    public Mono<Bench> getBench(@PathVariable("id") String id) {
-        return benchService.findById(id)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")));
+    public Mono<Bench> getBench(@PathVariable("bench_id") int benchId, @RequestParam(value = "access_token") String accessToken) {
+        return benchService.getBench(benchId, accessToken)
+                .onErrorMap(NoSuchElementException.class, e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()))
+                .onErrorMap(IllegalArgumentException.class, e -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage()));
     }
 
     @PutMapping("/{bench_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Mono<Bench> updateBench(@RequestBody Bench bench,
-                                   @PathVariable("bench_id") String benchId,
-                                   @RequestParam("token") String token) {
-        return benchService.findById(benchId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
-                .flatMap(benchFromDb -> {
-                    if (benchFromDb.getToken().equals(token)) {
-                        benchFromDb.setName(bench.getName());
-                        return benchService.save(benchFromDb);
-                    } else
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
-                })
-                .doOnNext(updatedBench -> log.info("Bench | update - id: {}", benchId));
+                                   @PathVariable("bench_id") int benchId, @RequestParam(value = "edit_token") String editToken) {
+        return benchService.updateBench(benchId, editToken, bench)
+                .onErrorMap(NoSuchElementException.class, e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()))
+                .onErrorMap(IllegalArgumentException.class, e -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage()));
     }
 
     @DeleteMapping("/{bench_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Mono<Bench> deleteBench(@PathVariable("bench_id") String benchId,
-                                   @RequestParam("token") String token) {
-        return benchService.findById(benchId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
-                .flatMap(bench -> {
-                    if (!bench.getToken().equals(token))
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
-                    return benchService.deleteById(benchId)
-                            .then(storageService.deleteBench(benchId))
-                            .thenReturn(bench);
-                })
-                .doOnNext(updatedBench -> log.info("Bench | delete - id: {}", benchId));
+    public Mono<Void> deleteBench(@PathVariable("bench_id") int benchId, @RequestParam(value = "edit_token") String editToken) {
+        return benchService.deleteBench(benchId, editToken)
+                .onErrorMap(NoSuchElementException.class, e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()))
+                .onErrorMap(IllegalArgumentException.class, e -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage()));
     }
 
     @PostMapping("/{bench_id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Bench> createFile(@PathVariable("bench_id") String benchId,
-                                  @RequestParam("token") String token,
-                                  @RequestPart("file") Flux<FilePart> filePartFlux) {
-        return benchService.findById(benchId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
-                .flatMap(bench -> {
-                    if (!bench.getToken().equals(token))
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
-                    if (bench.getFiles() == null)
-                        bench.setFiles(new ArrayList<>());
-                    return filePartFlux.flatMap(filePart -> {
-                        var file = new File();
-                        file.setId(idGenerator.generate());
-                        return storageService.saveFile(benchId, file.getId(), filePart)
-                                .doOnNext(file::setName)
-                                .doOnNext(filename -> bench.getFiles().add(file));
-                    }).then(benchService.save(bench));
-                }).doOnNext(bench -> log.info("File | create - benchId: {}", bench.getId()));
+    public Mono<File> createFile(@PathVariable("bench_id") int benchId, @RequestParam(value = "edit_token") String editToken,
+                                 @RequestPart(value = "name", required = false) String name, @RequestPart(value = "description", required = false) String description,
+                                 @RequestPart("content") Mono<FilePart> filePartMono, @RequestHeader("content-length") long contentLength) {
+        return filePartMono.flatMap(filePart -> {
+            var file = new File();
+            file.setName(name);
+            file.setDescription(description);
+            file.setSize(contentLength);
+            return benchService.addFile(benchId, editToken, file, bench ->
+                            bench.getFileCount() < 5 ?
+                                    Optional.empty() :
+                                    Optional.of(new IllegalStateException("A bench can have max 5 files")))
+                    .flatMap(benchFileTuple ->
+                            storageService.saveFile(benchFileTuple.getT1().getDirname(), benchFileTuple.getT2().getFilename(), filePart)
+                                    .thenReturn(benchFileTuple.getT2()))
+                    .onErrorMap(NoSuchElementException.class, e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()))
+                    .onErrorMap(IllegalArgumentException.class, e -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage()))
+                    .onErrorMap(IOException.class, e -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        });
     }
 
     @GetMapping(value = "/{bench_id}/{file_id}", produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public Flux<DataBuffer> getFile(@PathVariable("bench_id") String benchId,
-                                    @PathVariable("file_id") String fileId) {
-        return storageService.getFile(benchId, fileId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found")));
+    public Flux<DataBuffer> getFile(@PathVariable("bench_id") int benchId, @PathVariable("file_id") int fileId, @RequestParam("access_token") String accessToken) {
+        return benchService.getFile(benchId, accessToken, fileId)
+                .flatMapMany(benchfileTuple -> storageService.getFile(benchfileTuple.getT1().getDirname(), benchfileTuple.getT2().getFilename()))
+                .onErrorMap(NoSuchElementException.class, e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()))
+                .onErrorMap(IllegalArgumentException.class, e -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage()))
+                .onErrorMap(NoSuchFileException.class, e -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()))
+                .onErrorMap(IOException.class, e -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
     }
 
-    @DeleteMapping("/{bench_id}/{file_id}")
+    @PutMapping(value = "/{bench_id}/{file_id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Mono<File> deleteFile(@PathVariable("bench_id") String benchId,
-                                 @PathVariable("file_id") String fileId,
-                                 @RequestParam("token") String token) {
-        return benchService.findById(benchId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Bench not found")))
-                .flatMap(bench -> {
-                    if (!bench.getToken().equals(token))
-                        return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect token"));
-                    if (bench.getFiles() == null)
-                        bench.setFiles(new ArrayList<>());
-                    File deletedFile = null;
-                    var itr = bench.getFiles().iterator();
-                    while (itr.hasNext()) {
-                        var f = itr.next();
-                        if (f.getId().equals(fileId)) {
-                            itr.remove();
-                            deletedFile = f;
-                        }
-                    }
-                    if (deletedFile == null)
-                        return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found"));
-                    return benchService.save(bench)
-                            .then(storageService.deleteFile(benchId, fileId))
-                            .thenReturn(deletedFile);
-                })
-                .doOnNext(file -> log.info("File | delete - benchId: {}, fileId: {}", benchId, file.getId()));
+    public Mono<File> updateFile(@PathVariable("bench_id") int benchId, @PathVariable("file_id") int fileId,
+                                 @RequestParam("edit_token") String editToken, @RequestBody File file) {
+        return benchService.updateFile(benchId, editToken, fileId, file)
+                .map(Tuple2::getT2)
+                .onErrorMap(NoSuchElementException.class, e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()))
+                .onErrorMap(IllegalArgumentException.class, e -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage()));
     }
-    */
+
+    @DeleteMapping(value = "/{bench_id}/{file_id}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Mono<File> deleteFile(@PathVariable("bench_id") int benchId, @PathVariable("file_id") int fileId,
+                                 @RequestParam("edit_token") String editToken) {
+        return benchService.removeFile(benchId, editToken, fileId)
+                .flatMap(benchFileTuple ->
+                        storageService.deleteFile(benchFileTuple.getT1().getDirname(), benchFileTuple.getT2().getFilename())
+                                .thenReturn(benchFileTuple.getT2()))
+                .onErrorMap(NoSuchElementException.class, e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()))
+                .onErrorMap(IllegalArgumentException.class, e -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage()))
+                .onErrorMap(NoSuchFileException.class, e -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()))
+                .onErrorMap(IOException.class, e -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+    }
 
 }

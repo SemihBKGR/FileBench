@@ -62,7 +62,14 @@ public class LocalStorageService implements StorageService {
 
     @Override
     public Mono<Void> saveFile(@NonNull String dirname, @NonNull String filename, @NonNull FilePart filePart) {
-        return filePart.transferTo(resolveFilePath(dirname, filename));
+        return Mono.<Path>create(sink -> {
+            try {
+                var path = Files.createDirectory(resolveBenchPath(dirname));
+                sink.success(path);
+            } catch (IOException e) {
+                sink.error(e);
+            }
+        }).flatMap(path -> filePart.transferTo(resolveFilePath(path, filename)));
     }
 
     @Override
@@ -102,6 +109,10 @@ public class LocalStorageService implements StorageService {
 
     private Path resolveBenchPath(@NonNull String dirname) {
         return rootDirPath.resolve(dirname);
+    }
+
+    private Path resolveFilePath(@NonNull Path dirPath, @NonNull String filename) {
+        return dirPath.resolve(filename);
     }
 
     private Path resolveFilePath(@NonNull String dirname, @NonNull String filename) {
