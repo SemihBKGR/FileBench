@@ -29,6 +29,8 @@ bench:
   max-expiration-duration: 10000000
   file:
     max-size: 1000000
+  expiration:
+    check-duration: 10000
 
 logging:
   level:

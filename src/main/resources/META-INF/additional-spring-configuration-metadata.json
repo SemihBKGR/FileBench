@@ -14,6 +14,11 @@
       "name": "storage.local.root-dir",
       "type": "java.lang.String",
       "description": "Path of root dir used by local storage."
+    },
+    {
+      "name": "bench.expiration.check-duration",
+      "type": "java.time.Duration",
+      "description": "Duration of scheduler's rate that deletes expired benches."
     }
   ]
 }

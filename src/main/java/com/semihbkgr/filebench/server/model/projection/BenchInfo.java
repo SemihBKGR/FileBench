@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class BenchInfo {
 
     private int id;
-    private long expirationDuration;
-    private long creationTime;
+    private String dirname;
 
 }
