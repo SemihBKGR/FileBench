@@ -38,6 +38,8 @@ bench:
     max-size: 1000000
   expiration:
     check-duration: 10000
+  actuator:
+    cache-duration: 30000
 
 logging:
   level:

@@ -4,7 +4,6 @@ import com.semihbkgr.filebench.server.repository.BenchRepository;
 import com.semihbkgr.filebench.server.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -17,7 +16,7 @@ public class BenchScheduler {
     private final BenchRepository benchRepository;
     private final StorageService storageService;
 
-    @Scheduled(fixedRateString = "${bench.expiration.check-duration}")
+    //@Scheduled(fixedRateString = "${bench.expiration.check-duration}")
     public void deleteExpiredBenches() {
         benchRepository.findAllExpiredBenchInfos()
                 .flatMap(info ->

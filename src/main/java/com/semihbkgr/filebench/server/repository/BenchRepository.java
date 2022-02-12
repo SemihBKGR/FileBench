@@ -11,7 +11,7 @@ public interface BenchRepository extends R2dbcRepository<Bench, Integer> {
 
     Mono<Bench> findById(int id);
 
-    @Query(value = "SELECT `id`,`dirname` FROM benches WHERE `creation_time` + `expiration_duration` > CURRENT_DATE()")
+    @Query("SELECT `id`,`dirname` FROM benches WHERE `creation_time` + `expiration_duration` > ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000)")
     Flux<BenchInfo> findAllExpiredBenchInfos();
 
 }

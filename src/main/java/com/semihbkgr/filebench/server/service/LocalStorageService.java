@@ -64,7 +64,9 @@ public class LocalStorageService implements StorageService {
     public Mono<Void> saveFile(@NonNull String dirname, @NonNull String filename, @NonNull FilePart filePart) {
         return Mono.<Path>create(sink -> {
             try {
-                var path = Files.createDirectory(resolveBenchPath(dirname));
+                var path = resolveBenchPath(dirname);
+                if (!Files.exists(path))
+                    path = Files.createDirectory(path);
                 sink.success(path);
             } catch (IOException e) {
                 sink.error(e);

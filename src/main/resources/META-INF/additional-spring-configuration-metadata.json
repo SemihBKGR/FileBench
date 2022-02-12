@@ -19,6 +19,11 @@
       "name": "bench.expiration.check-duration",
       "type": "java.lang.Long",
       "description": "Duration of scheduler's rate that deletes expired benches."
+    },
+    {
+      "name": "bench.actuator.cache-duration",
+      "type": "java.lang.Long",
+      "description": "Duration of bench actuator cache."
     }
   ]
 }

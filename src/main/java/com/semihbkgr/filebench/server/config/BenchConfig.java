@@ -1,5 +1,6 @@
 package com.semihbkgr.filebench.server.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,14 +30,19 @@ public class BenchConfig {
         public static final long DEFAULT_MIN_EXPIRATION_DURATION = 100000L;
         public static final long DEFAULT_MAX_EXPIRATION_DURATION = 1000000L;
 
+        @JsonProperty("max_size")
         private long maxSize;
 
+        @JsonProperty("max_file_count")
         private int maxFileCount = DEFAULT_MAX_FILE_COUNT;
 
+        @JsonProperty("max_file_size")
         private long maxFileSize = DEFAULT_MAX_FILE_SIZE;
 
+        @JsonProperty("max_expiration_duration")
         private long minExpirationDuration = DEFAULT_MIN_EXPIRATION_DURATION;
 
+        @JsonProperty("min_expiration_duration")
         private long maxExpirationDuration = DEFAULT_MAX_EXPIRATION_DURATION;
 
         private FileProperties file;
@@ -48,6 +54,7 @@ public class BenchConfig {
 
             public static final long DEFAULT_MAX_SIZE = 1000000L;
 
+            @JsonProperty("max_size")
             private long maxSize = DEFAULT_MAX_SIZE;
 
         }
