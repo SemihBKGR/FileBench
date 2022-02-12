@@ -1,7 +1,7 @@
 package com.semihbkgr.filebench.server.component;
 
-public interface TokenGenerator {
+public interface NameGenerator {
 
-    String token();
+    String name();
 
 }

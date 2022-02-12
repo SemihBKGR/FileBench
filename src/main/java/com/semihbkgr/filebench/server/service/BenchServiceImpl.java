@@ -3,6 +3,7 @@ package com.semihbkgr.filebench.server.service;
 import com.semihbkgr.filebench.server.model.Bench;
 import com.semihbkgr.filebench.server.model.projection.BenchInfo;
 import com.semihbkgr.filebench.server.repository.BenchRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -12,26 +13,31 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class BenchServiceImpl implements BenchService {
 
-    private final BenchRepository benchRepository;
+    private final BenchRepository repository;
 
     @Override
-    public Mono<Bench> save(Bench bench) {
-        return benchRepository.save(bench);
+    public Mono<Bench> save(@NonNull Bench bench) {
+        return repository.save(bench);
     }
 
     @Override
-    public Flux<BenchInfo> findAll() {
-        return benchRepository.findAllBy();
+    public Mono<Bench> findByAccessToken(@NonNull String token) {
+        return repository.findByAccessToken(token);
     }
 
     @Override
-    public Mono<Bench> findById(String id) {
-        return benchRepository.findById(id);
+    public Mono<Bench> findByEditToken(@NonNull String token) {
+        return repository.findByEditToken(token);
     }
 
     @Override
-    public Mono<Void> deleteById(String id) {
-        return benchRepository.deleteById(id);
+    public Flux<BenchInfo> findAllInfos() {
+        return repository.findAllBy();
+    }
+
+    @Override
+    public Mono<Void> deleteById(int id) {
+        return repository.deleteById(id);
     }
 
 }

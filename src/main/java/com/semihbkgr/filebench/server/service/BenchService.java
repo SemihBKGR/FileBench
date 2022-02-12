@@ -9,10 +9,12 @@ public interface BenchService {
 
     Mono<Bench> save(Bench bench);
 
-    Flux<BenchInfo> findAll();
+    Mono<Bench> findByAccessToken(String token);
 
-    Mono<Bench> findById(String id);
+    Mono<Bench> findByEditToken(String token);
 
-    Mono<Void> deleteById(String id);
+    Flux<BenchInfo> findAllInfos();
+
+    Mono<Void> deleteById(int id);
 
 }

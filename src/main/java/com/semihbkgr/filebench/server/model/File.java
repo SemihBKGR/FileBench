@@ -1,5 +1,6 @@
 package com.semihbkgr.filebench.server.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,12 @@ public class File {
     @Column("bench_id")
     private Integer benchId;
 
+    @JsonIgnore
+    private String filename;
+
     private String name;
+
+    private String description;
 
     private long size;
 

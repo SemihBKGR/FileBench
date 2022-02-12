@@ -45,7 +45,7 @@ class LocalStorageServiceTest {
     void createEnv() throws IOException {
         this.storageService = new LocalStorageService(ROOT_DIR);
         storageService.createOrClearRootDir();
-        var testFileInputStream = new ClassPathResource(DIR_NAME + '/' + FILE_NAME).getInputStream();
+        var testFileInputStream = new ClassPathResource(Path.of(DIR_NAME).resolve(FILE_NAME).toString()).getInputStream();
         Files.createDirectories(Path.of(ROOT_DIR).resolve(DIR_NAME));
         Files.write(Path.of(ROOT_DIR).resolve(DIR_NAME).resolve(FILE_NAME), testFileInputStream.readAllBytes(), StandardOpenOption.CREATE);
     }

@@ -20,7 +20,7 @@ public class NumericalTokenGenerator implements TokenGenerator {
     }
 
     @Override
-    public String generate() {
+    public String token() {
         var token = new StringBuilder();
         IntStream.range(0, length)
                 .forEach(i -> token.append((char) (random.nextInt(10) + 48)));

@@ -1,5 +1,6 @@
 package com.semihbkgr.filebench.server.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,12 @@ public class Bench {
     @JsonView(Bench.Views.BenchSecrets.class)
     private String editToken;
 
+    @JsonIgnore
+    private String dirname;
+
     private String name;
+
+    private String description;
 
     @Transient
     private List<File> files;
