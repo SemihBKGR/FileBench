@@ -1,6 +1,7 @@
 package com.semihbkgr.filebench.server.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.semihbkgr.filebench.server.config.BenchConfig;
 import com.semihbkgr.filebench.server.model.Bench;
 import com.semihbkgr.filebench.server.model.File;
 import com.semihbkgr.filebench.server.service.BenchService;
@@ -32,11 +33,16 @@ public class BenchController {
 
     private final BenchService benchService;
     private final StorageService storageService;
+    private final BenchConfig.BenchProperties benchProperties;
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @JsonView(Bench.Views.BenchSecrets.class)
     public Mono<Bench> createBench(@RequestBody Bench bench) {
+        if (bench.getExpirationDuration() < benchProperties.getMinExpirationDuration())
+            bench.setExpirationDuration(benchProperties.getMinExpirationDuration());
+        else if (bench.getExpirationDuration() > benchProperties.getMaxExpirationDuration())
+            bench.setExpirationDuration(benchProperties.getMaxExpirationDuration());
         return benchService.saveBench(bench);
     }
 
@@ -71,15 +77,20 @@ public class BenchController {
     public Mono<File> createFile(@PathVariable("bench_id") int benchId, @RequestParam(value = "edit_token") String editToken,
                                  @RequestPart(value = "name", required = false) String name, @RequestPart(value = "description", required = false) String description,
                                  @RequestPart("content") Mono<FilePart> filePartMono, @RequestHeader("content-length") long contentLength) {
+        if (contentLength > benchProperties.getFile().getMaxSize())
+            return Mono.error(new IllegalArgumentException("A file size can be max " + benchProperties.getFile().getMaxSize() + " bytes"));
         return filePartMono.flatMap(filePart -> {
             var file = new File();
             file.setName(name);
             file.setDescription(description);
             file.setSize(contentLength);
-            return benchService.addFile(benchId, editToken, file, bench ->
-                            bench.getFileCount() < 5 ?
-                                    Optional.empty() :
-                                    Optional.of(new IllegalStateException("A bench can have max 5 files")))
+            return benchService.addFile(benchId, editToken, file, bench -> {
+                        if (bench.getFileCount() >= benchProperties.getMaxFileCount())
+                            return Optional.of(new IllegalStateException("A bench can have max " + benchProperties.getMaxFileCount() + " files"));
+                        if (bench.getFileSize() + contentLength > benchProperties.getMaxFileSize())
+                            return Optional.of(new IllegalStateException("A bench size can be max " + benchProperties.getMaxFileSize() + " bytes"));
+                        return Optional.empty();
+                    })
                     .flatMap(benchFileTuple ->
                             storageService.saveFile(benchFileTuple.getT1().getDirname(), benchFileTuple.getT2().getFilename(), filePart)
                                     .thenReturn(benchFileTuple.getT2()))

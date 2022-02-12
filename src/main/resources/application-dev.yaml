@@ -23,12 +23,12 @@ storage:
     root-dir: files
 
 bench:
-  manager:
-    expiration-check-time-ms: 1000
-
-file:
-  size-max-byte: 1.048.576
-
+  max-file-count: 5
+  max-file-size: 5000000
+  min-expiration-duration: 1000000
+  max-expiration-duration: 10000000
+  file:
+    max-size: 1000000
 
 logging:
   level:

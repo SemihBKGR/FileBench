@@ -9,6 +9,11 @@
       "name": "token.length",
       "type": "java.lang.String",
       "description": "Length of bench token."
+    },
+    {
+      "name": "storage.local.root-dir",
+      "type": "java.lang.String",
+      "description": "Path of root dir used by local storage."
     }
   ]
 }

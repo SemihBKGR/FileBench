@@ -48,7 +48,7 @@ public class Bench {
     private long fileSize;
 
     @Column("expiration_duration")
-    @JsonProperty("expiration_duration")
+    @JsonProperty(value = "expiration_duration", defaultValue = "-1")
     private long expirationDuration;
 
     @Column("creation_time")
