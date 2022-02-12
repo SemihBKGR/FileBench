@@ -26,4 +26,6 @@ public interface BenchService {
 
     Mono<Tuple2<Bench, File>> removeFile(int benchId, String editToken, int fileId);
 
+    Mono<Long> allSize();
+
 }

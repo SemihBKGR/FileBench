@@ -80,7 +80,7 @@ public class BenchController {
                                  @RequestPart("content") Mono<FilePart> filePartMono, @RequestHeader("content-length") long contentLength) {
         if (contentLength > benchProperties.getFile().getMaxSize())
             return Mono.error(new IllegalArgumentException("A file size can be max " + benchProperties.getFile().getMaxSize() + " bytes"));
-        return storageService.size().flatMap(size -> {
+        return benchService.allSize().flatMap(size -> {
             if (size >= benchProperties.getMaxSize())
                 return Mono.error(new IllegalStateException("Storage size is fullly consumed"));
             return filePartMono;

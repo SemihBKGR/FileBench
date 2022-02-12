@@ -122,6 +122,11 @@ public class BenchServiceImpl implements BenchService {
                                                 .thenReturn(Tuples.of(benchFromDB, fileFromDB))));
     }
 
+    @Override
+    public Mono<Long> allSize() {
+        return benchRepository.allFilesSize();
+    }
+
     private Mono<Bench> getBenchAndCheckAccessToken(int benchId, String accessToken) {
         return benchRepository.findById(benchId)
                 .switchIfEmpty(Mono.error(new NoSuchElementException("No such bench with given id, id: " + benchId)))

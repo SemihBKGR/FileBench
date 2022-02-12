@@ -2,7 +2,6 @@ package com.semihbkgr.filebench.server.actuator;
 
 import com.semihbkgr.filebench.server.repository.BenchRepository;
 import com.semihbkgr.filebench.server.repository.FileRepository;
-import com.semihbkgr.filebench.server.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -20,7 +19,6 @@ public class BenchEndpoint {
 
     private final BenchRepository benchRepository;
     private final FileRepository fileRepository;
-    private final StorageService storageService;
 
     @Value("${bench.actuator.cache-duration:10000}")
     private volatile long cacheDuration;
@@ -32,7 +30,7 @@ public class BenchEndpoint {
     public Mono<BenchActuatorInfo> info() {
         if (System.currentTimeMillis() - lastCalculationTime <= cacheDuration)
             return Mono.just(lastInfo);
-        return Mono.zip(benchRepository.count(), fileRepository.count(), storageService.size())
+        return Mono.zip(benchRepository.count(), fileRepository.count(), benchRepository.allFilesSize())
                 .map(tuple -> new BenchActuatorInfo(tuple.getT1(), tuple.getT2(), tuple.getT3()))
                 .doOnNext(info -> {
                     this.lastInfo = info;

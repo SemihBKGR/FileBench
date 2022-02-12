@@ -14,4 +14,7 @@ public interface BenchRepository extends R2dbcRepository<Bench, Integer> {
     @Query("SELECT `id`,`dirname` FROM benches WHERE `creation_time` + `expiration_duration` > ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000)")
     Flux<BenchInfo> findAllExpiredBenchInfos();
 
+    @Query("SELECT SUM(file_size) FROM benches")
+    Mono<Long> allFilesSize();
+
 }
