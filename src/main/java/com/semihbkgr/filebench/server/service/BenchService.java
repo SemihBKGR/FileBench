@@ -16,7 +16,7 @@ public interface BenchService {
 
     Mono<Bench> getBench(int benchId, String accessToken);
 
-    Mono<Void> deleteBench(int benchId, String editToken);
+    Mono<Bench> deleteBench(int benchId, String editToken);
 
     Mono<Tuple2<Bench, File>> getFile(int benchId, String accessToken, int fileId);
 

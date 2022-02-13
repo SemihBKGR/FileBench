@@ -61,9 +61,11 @@ public class BenchServiceImpl implements BenchService {
     }
 
     @Override
-    public Mono<Void> deleteBench(int benchId, String editToken) {
+    public Mono<Bench> deleteBench(int benchId, String editToken) {
         return getBenchAndCheckEditToken(benchId, editToken)
-                .flatMap(benchRepository::delete);
+                .flatMap(benchFromDB ->
+                        benchRepository.delete(benchFromDB)
+                                .thenReturn(benchFromDB));
     }
 
     @Override

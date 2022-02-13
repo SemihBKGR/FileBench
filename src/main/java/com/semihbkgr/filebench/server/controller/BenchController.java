@@ -1,6 +1,7 @@
 package com.semihbkgr.filebench.server.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.semihbkgr.filebench.server.component.BenchMetricManager;
 import com.semihbkgr.filebench.server.config.BenchConfig;
 import com.semihbkgr.filebench.server.model.Bench;
 import com.semihbkgr.filebench.server.model.File;
@@ -35,6 +36,7 @@ public class BenchController {
     private final BenchService benchService;
     private final StorageService storageService;
     private final BenchConfig.BenchProperties benchProperties;
+    private final BenchMetricManager metricManager;
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -69,6 +71,8 @@ public class BenchController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Mono<Void> deleteBench(@PathVariable("bench_id") int benchId, @RequestParam(value = "edit_token") String editToken) {
         return benchService.deleteBench(benchId, editToken)
+                .doOnNext(bench -> metricManager.changeConsumedMemory(-bench.getFileSize()))
+                .flatMap(bench -> storageService.deleteBench(bench.getDirname()))
                 .onErrorMap(NoSuchElementException.class, e -> new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage()))
                 .onErrorMap(IllegalArgumentException.class, e -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage()));
     }
@@ -96,6 +100,7 @@ public class BenchController {
                             return Optional.of(new IllegalStateException("A bench size can be max " + benchProperties.getMaxFileSize() + " bytes"));
                         return Optional.empty();
                     })
+                    .doOnNext(benchFileTuple -> metricManager.changeConsumedMemory(benchFileTuple.getT2().getSize()))
                     .flatMap(benchFileTuple ->
                             storageService.saveFile(benchFileTuple.getT1().getDirname(), benchFileTuple.getT2().getFilename(), filePart)
                                     .thenReturn(benchFileTuple.getT2()))
@@ -132,6 +137,7 @@ public class BenchController {
     public Mono<File> deleteFile(@PathVariable("bench_id") int benchId, @PathVariable("file_id") int fileId,
                                  @RequestParam("edit_token") String editToken) {
         return benchService.removeFile(benchId, editToken, fileId)
+                .doOnNext(benchFileTuple -> metricManager.changeConsumedMemory(-benchFileTuple.getT2().getSize()))
                 .flatMap(benchFileTuple ->
                         storageService.deleteFile(benchFileTuple.getT1().getDirname(), benchFileTuple.getT2().getFilename())
                                 .thenReturn(benchFileTuple.getT2()))

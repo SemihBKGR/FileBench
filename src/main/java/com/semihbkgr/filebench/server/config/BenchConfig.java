@@ -43,7 +43,7 @@ public class BenchConfig {
         private Duration minExpirationDuration = Duration.ofMillis(DEFAULT_MIN_EXPIRATION_DURATION_MS);
 
         @JsonProperty("min_expiration_duration")
-        private Duration maxExpirationDuration =  Duration.ofMillis(DEFAULT_MAX_EXPIRATION_DURATION_MS);
+        private Duration maxExpirationDuration = Duration.ofMillis(DEFAULT_MAX_EXPIRATION_DURATION_MS);
 
         private FileProperties file;
 

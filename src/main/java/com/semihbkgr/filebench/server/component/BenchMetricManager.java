@@ -10,23 +10,29 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class BenchMetricManager {
 
-
     private final String memorySizeName;
-    private final MeterRegistry meterRegistry;
     private final AtomicLong size;
 
-    public BenchMetricManager(@Value("${bench.metric.memory-size-name}") String memorySizeName, MeterRegistry meterRegistry, BenchRepository benchRepository) {
+    public BenchMetricManager(@Value("${bench.metric.memory-size-name}") String memorySizeName,
+                              MeterRegistry meterRegistry, BenchRepository benchRepository) {
         this.memorySizeName = memorySizeName;
-        this.meterRegistry = meterRegistry;
         this.size = new AtomicLong();
         benchRepository.allFilesSize().subscribe(s -> {
             size.set(s);
-            meterRegistry.gauge(memorySizeName, s);
+            meterRegistry.gauge(memorySizeName, size);
         });
     }
 
     public void changeConsumedMemory(long s) {
-        meterRegistry.gauge(memorySizeName, size.addAndGet(s));
+        size.addAndGet(s);
+    }
+
+    public String getMemorySizeName() {
+        return memorySizeName;
+    }
+
+    public long getSize() {
+        return size.get();
     }
 
 }

@@ -16,7 +16,7 @@ import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
-@WebEndpoint(id = "bench-metric")
+@WebEndpoint(id = "bench-info")
 public class BenchEndpoint {
 
     private final BenchRepository benchRepository;
