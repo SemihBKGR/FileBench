@@ -12,6 +12,8 @@ import org.springframework.boot.actuate.endpoint.web.annotation.WebEndpoint;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 @Component
 @RequiredArgsConstructor
 @WebEndpoint(id = "bench")
@@ -20,21 +22,21 @@ public class BenchEndpoint {
     private final BenchRepository benchRepository;
     private final FileRepository fileRepository;
 
-    @Value("${bench.actuator.cache-duration:10000}")
-    private volatile long cacheDuration;
+    @Value("${bench.actuator.cache-duration:10000ms}")
+    private volatile Duration cacheDuration;
 
     private volatile BenchActuatorInfo lastInfo;
-    private volatile long lastCalculationTime = -1;
+    private volatile long lastCalculationTimeMS = -1;
 
     @ReadOperation
     public Mono<BenchActuatorInfo> info() {
-        if (System.currentTimeMillis() - lastCalculationTime <= cacheDuration)
+        if (System.currentTimeMillis() - lastCalculationTimeMS <= cacheDuration.toMillis())
             return Mono.just(lastInfo);
         return Mono.zip(benchRepository.count(), fileRepository.count(), benchRepository.allFilesSize())
                 .map(tuple -> new BenchActuatorInfo(tuple.getT1(), tuple.getT2(), tuple.getT3()))
                 .doOnNext(info -> {
                     this.lastInfo = info;
-                    this.lastCalculationTime = System.currentTimeMillis();
+                    this.lastCalculationTimeMS = System.currentTimeMillis();
                 });
     }
 
@@ -48,14 +50,14 @@ public class BenchEndpoint {
     }
 
     @WriteOperation
-    public Mono<Void> setCacheDuration(@Selector long cacheDuration) {
-        this.cacheDuration = cacheDuration;
+    public Mono<Void> setCacheDuration(@Selector long cacheDurationMS) {
+        this.cacheDuration = Duration.ofMillis(cacheDurationMS);
         return Mono.empty();
     }
 
     @DeleteOperation
     public Mono<Void> clearCache() {
-        lastCalculationTime = -1;
+        lastCalculationTimeMS = -1;
         return Mono.empty();
     }
 

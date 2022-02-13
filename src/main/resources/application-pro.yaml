@@ -29,17 +29,17 @@ storage:
     root-dir: files
 
 bench:
-  max-size: 50000000
-  max-file-count: 5
-  max-file-size: 5000000
-  min-expiration-duration: 1000000
-  max-expiration-duration: 10000000
+  max-size: 5368709120 #5GB
+  max-file-count: 30
+  max-file-size: 5000000 #5MB
+  min-expiration-duration: 10m
+  max-expiration-duration: 1h
   file:
-    max-size: 1000000
+    max-size: 5242880
   expiration:
-    check-duration: 10000
+    check-duration: 20s
   actuator:
-    cache-duration: 30000
+    cache-duration: 10s
 
 logging:
   level:

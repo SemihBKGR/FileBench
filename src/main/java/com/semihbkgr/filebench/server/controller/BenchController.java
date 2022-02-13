@@ -40,10 +40,10 @@ public class BenchController {
     @ResponseStatus(HttpStatus.CREATED)
     @JsonView(Bench.Views.BenchSecrets.class)
     public Mono<Bench> createBench(@RequestBody Bench bench) {
-        if (bench.getExpirationDuration() < benchProperties.getMinExpirationDuration())
-            bench.setExpirationDuration(benchProperties.getMinExpirationDuration());
-        else if (bench.getExpirationDuration() > benchProperties.getMaxExpirationDuration())
-            bench.setExpirationDuration(benchProperties.getMaxExpirationDuration());
+        if (bench.getExpirationDuration() < benchProperties.getMinExpirationDuration().toMillis())
+            bench.setExpirationDuration(benchProperties.getMinExpirationDuration().toMillis());
+        else if (bench.getExpirationDuration() > benchProperties.getMaxExpirationDuration().toMillis())
+            bench.setExpirationDuration(benchProperties.getMaxExpirationDuration().toMillis());
         return benchService.saveBench(bench);
     }
 

@@ -7,10 +7,10 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.time.Duration;
 
 @Configuration
-@EnableScheduling
 public class BenchConfig {
 
     @Bean
@@ -27,8 +27,8 @@ public class BenchConfig {
         public static final long DEFAULT_MAX_SIZE = 50000000L;
         public static final int DEFAULT_MAX_FILE_COUNT = 25;
         public static final long DEFAULT_MAX_FILE_SIZE = 5000000L;
-        public static final long DEFAULT_MIN_EXPIRATION_DURATION = 100000L;
-        public static final long DEFAULT_MAX_EXPIRATION_DURATION = 1000000L;
+        public static final long DEFAULT_MIN_EXPIRATION_DURATION_MS = 100000L;
+        public static final long DEFAULT_MAX_EXPIRATION_DURATION_MS = 1000000L;
 
         @JsonProperty("max_size")
         private long maxSize;
@@ -40,10 +40,10 @@ public class BenchConfig {
         private long maxFileSize = DEFAULT_MAX_FILE_SIZE;
 
         @JsonProperty("max_expiration_duration")
-        private long minExpirationDuration = DEFAULT_MIN_EXPIRATION_DURATION;
+        private Duration minExpirationDuration = Duration.ofMillis(DEFAULT_MIN_EXPIRATION_DURATION_MS);
 
         @JsonProperty("min_expiration_duration")
-        private long maxExpirationDuration = DEFAULT_MAX_EXPIRATION_DURATION;
+        private Duration maxExpirationDuration =  Duration.ofMillis(DEFAULT_MAX_EXPIRATION_DURATION_MS);
 
         private FileProperties file;
 
