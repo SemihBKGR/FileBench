@@ -24,6 +24,11 @@
       "name": "bench.actuator.cache-duration",
       "type": "java.time.Duration",
       "description": "Duration of bench actuator cache."
+    },
+    {
+      "name": "bench.metric.memory-size-name",
+      "type": "java.lang.String",
+      "description": "Metric name of bench memory size."
     }
   ]
 }

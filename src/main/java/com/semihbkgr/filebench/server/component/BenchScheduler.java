@@ -10,7 +10,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 
@@ -35,7 +34,6 @@ public class BenchScheduler implements ApplicationRunner {
                                 .then(benchRepository.deleteById(info.getId()))
                                 .onErrorResume(e -> Mono.empty()))
                 .count()
-                .subscribeOn(Schedulers.boundedElastic())
                 .subscribe(count -> {
                     if (count > 0)
                         log.info("ExpiredBenchCount: {}", count);

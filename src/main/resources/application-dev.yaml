@@ -40,6 +40,9 @@ bench:
     check-duration: 20s
   actuator:
     cache-duration: 10s
+  metric:
+    memory-size-name: bench-memory-size
+
 
 logging:
   level:
