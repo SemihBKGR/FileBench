@@ -10,23 +10,37 @@ services:
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
-    ports:
-      - "3306:3306"
     networks:
       - file-bench-server
   filebench:
+    image: filebench
     build: .
     container_name: file-bench-server
     hostname: filebench
     environment:
+      SPRING_PROFILES_ACTIVE: 'pro'
       SERVER_PORT: 9000
       DATABASE_USERNAME: 'user'
       DATABASE_PASSWORD: 'password'
       DATABASE_HOSTNAME: 'database'
       DATABASE_PORT: 3306
       DATABASE_SCHEMA: 'filebench'
+    depends_on:
+      - database
     ports:
       - "9000:9000"
+    networks:
+      - file-bench-server
+  prometheus:
+    image: prom/prometheus
+    hostname: prometheus
+    container_name: prometheus-server
+    volumes:
+      - ./volumes/prometheus:/etc/prometheus/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+    ports:
+      - '9090:9090'
     networks:
       - file-bench-server
 
